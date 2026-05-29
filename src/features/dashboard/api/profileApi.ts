@@ -12,7 +12,7 @@ export type ProfileUser = {
 };
 
 export type UpdateProfilePayload = {
-  name:string;
+  name: string;
   designation: string;
   mobileNumber: string;
 };
@@ -31,7 +31,9 @@ export const readStoredUser = (): ProfileUser | null => {
 };
 
 const getUserFromResponse = (payload: any): ProfileUser => {
-  return payload?.data?.user ?? payload?.data?.manager ?? payload?.data ?? payload;
+  return (
+    payload?.data?.user ?? payload?.data?.manager ?? payload?.data ?? payload
+  );
 };
 
 const saveStoredUser = (user: ProfileUser) => {
@@ -44,25 +46,23 @@ export const getProfile = async () => {
     const response = await api.get("/profile/me");
     const user = getUserFromResponse(response.data);
     saveStoredUser(user);
-     return user;
+    return user;
   } catch (error) {
-   console.log("Error while getting profile")
+    console.log("Error while getting profile");
   }
 };
 
-export const updateProfile = async (
-  payload: UpdateProfilePayload,
-) => {
+export const updateProfile = async (payload: UpdateProfilePayload) => {
   const storedUser = readStoredUser();
-  const userId = storedUser?.id
+  const userId = storedUser?.id;
   try {
     if (!userId) {
       throw new Error("Profile id is missing");
     }
     const response = await api.patch("/profile/edit-profile", payload);
-
+    console.log("Profile updated successfully", response.data);
   } catch (error) {
-    console.log("Error ",error)
+    console.log("Error ", error);
   }
 };
 
