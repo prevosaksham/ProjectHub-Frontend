@@ -10,21 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build Frontend
-        run: CI=false npm run build
-
-      - name: Setup SSH
+      - name: Deploy Frontend to UAT
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.GCP_VM_SSH_KEY }}" > ~/.ssh/id_rsa
@@ -32,28 +18,30 @@ jobs:
 
           ssh-keyscan -H ${{ secrets.GCP_VM_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Prepare Server
-        run: |
-          ssh ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }} << 'EOF'
-            sudo rm -rf /var/www/project-hub/frontend/dist/*
-            mkdir -p /tmp/projecthub-dist
-          EOF
-
-      - name: Upload Dist Files
-        run: |
-          scp -r dist/* \
-            ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }}:/tmp/projecthub-dist/
-
-      - name: Move Dist to Production
-        run: |
           ssh ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }} << 'EOF'
 
-            sudo cp -r /tmp/projecthub-dist/* /var/www/project-hub/frontend/dist/
+            set -e
 
-            sudo chmod -R 755 /var/www/project-hub/frontend/dist/
+            echo "🚀 Starting ProjectHub Frontend Deploy"
 
-            rm -rf /tmp/projecthub-dist
+            cd /var/www/project-hub/frontend
 
-            echo "✅ ProjectHub frontend deployment completed"
+            echo "📥 Pulling latest code..."
+            sudo git fetch origin
+            sudo git reset --hard origin/main
+
+            echo "📦 Installing dependencies..."
+            sudo npm install
+
+            echo "🧹 Cleaning old build..."
+            sudo rm -rf dist
+
+            echo "🏗️ Building frontend..."
+            sudo npm run build
+
+            echo "🔐 Setting permissions..."
+            sudo chmod -R 755 dist/
+
+            echo "✅ ProjectHub Frontend Deployment Completed"
 
           EOF
