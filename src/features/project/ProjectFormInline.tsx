@@ -813,49 +813,52 @@ export default function ProjectFormInline({
                   },
                 ].map((env) => {
                   return (
-                    <div className=" px-2 py-0 bg-white border border-[#E5E5E5] rounded-lg">
+                    <div className="px-2 py-0 bg-white border border-[#E5E5E5] rounded-lg">
                       <div
                         key={env.name}
-                        className="grid sm:grid-cols-[80px_1fr_auto] justify-center items-center gap-1"
+                        className="flex items-center gap-2 sm:grid sm:grid-cols-[80px_1fr] sm:gap-1"
                       >
                         <div
-                          className={`flex w-13.75 h-7.5 items-center justify-center rounded-[26px] px-4 py-1.5 text-xs font-bold ${env.color}`}
+                          className={`flex shrink-0 w-[55px] h-[30px] items-center justify-center rounded-[26px] px-4 py-1.5 text-xs font-bold ${env.color}`}
                         >
                           {env.label}
                         </div>
 
-                        <input
-                          {...register(
-                            env.name as keyof CreateProjectPayload,
-                            isAdmin
-                              ? {
-                                  validate: (value) =>
-                                    !value ||
-                                    validateUrl(value) ||
-                                    "Invalid URL",
-                                }
-                              : {
-                                  required: `${env.label} URL is required`,
-                                  validate: (value) =>
-                                    validateUrl(value) || "Invalid URL",
-                                },
-                          )}
-                          disabled={isViewOnly}
-                          className={`${getInputClassName(
-                            !!errors[env.name as keyof CreateProjectPayload],
-                          )} border-none font-[Poppins] placeholder:text-[#7A7A7A] placeholder:font-medium placeholder:text-[14px] placeholder:leading-[100%] placeholder:tracking-normal`}
-                          placeholder={
-                            env.label === "DEV"
-                              ? "Enter Dev URL"
-                              : env.label === "UAT"
-                                ? "Enter UAT URL"
-                                : env.label === "PROD"
-                                  ? "Enter PROD URL"
-                                  : "Enter here..."
-                          }
-                        />
+                        <div className="flex-1 min-w-0 overflow-x-auto">
+                          <input
+                            {...register(
+                              env.name as keyof CreateProjectPayload,
+                              isAdmin
+                                ? {
+                                    validate: (value) =>
+                                      !value ||
+                                      validateUrl(value) ||
+                                      "Invalid URL",
+                                  }
+                                : {
+                                    required: `${env.label} URL is required`,
+                                    validate: (value) =>
+                                      validateUrl(value) || "Invalid URL",
+                                  },
+                            )}
+                            disabled={isViewOnly}
+                            className={`${getInputClassName(
+                              !!errors[env.name as keyof CreateProjectPayload],
+                            )} w-full min-w-[300px] border-none focus:outline-none focus:ring-0 font-[Poppins] placeholder:text-[#7A7A7A] placeholder:font-medium placeholder:text-[14px]`}
+                            placeholder={
+                              env.label === "DEV"
+                                ? "Enter Dev URL"
+                                : env.label === "UAT"
+                                  ? "Enter UAT URL"
+                                  : env.label === "PROD"
+                                    ? "Enter PROD URL"
+                                    : "Enter here..."
+                            }
+                          />
+                        </div>
+
                         {errors[env.name as keyof CreateProjectPayload] && (
-                          <p className="sm:col-span-3 mt-1 text-sm text-red-500 text-[12px]">
+                          <p className="w-full sm:col-span-2 mt-1 text-[12px] text-red-500">
                             {
                               errors[env.name as keyof CreateProjectPayload]
                                 ?.message
