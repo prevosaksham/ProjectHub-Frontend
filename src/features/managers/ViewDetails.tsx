@@ -181,8 +181,8 @@ function ViewDetails() {
                         </h4>
 
                         {/* <p className="mt-1 truncate text-sm text-slate-500">
-        {project.description || "No description available."}
-      </p> */}
+                          {project.description || "No description available."}
+                        </p> */}
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">

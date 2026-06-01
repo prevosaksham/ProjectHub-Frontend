@@ -157,7 +157,7 @@ function ChangePassword() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex h-[45px] w-full items-center justify-center gap-2 rounded-[8px] bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)] px-6 font-[Poppins] text-[14px] font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+            className="inline-flex h-11.25 w-full items-center justify-center gap-2 rounded-lg bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)] px-6 font-[Poppins] text-[14px] font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             <FiLock />
             {isSubmitting ? "Changing..." : "Change Password"}

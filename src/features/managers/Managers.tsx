@@ -10,8 +10,7 @@ import {
 } from "react-icons/fi";
 import plusIcon from "../../assets/plus icon.png";
 import { listManagers, toggleManager } from "./api/managerApi";
-import type { Manager } from "./types/manager.types";
-import Loader from "../../components/common/Loader";
+import type { Manager } from "./types/manager.types";import { showErrorToast, showSuccessToast } from "../../utils/toast";import Loader from "../../components/common/Loader";
 import Pagination from "../../components/common/Pagination";
 import EmptyState from "../../components/Emptyset";
 
@@ -22,15 +21,16 @@ function Managers() {
   const [total, setTotal] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState<string>("");
   const navigate = useNavigate();
 
-  const fetchManagers = async (p = page) => {
+  const fetchManagers = async (p = page, searchTerm = search) => {
     try {
       setLoading(true);
 
-      const res = await listManagers(p, limit);
+      const res = await listManagers(p, limit, searchTerm);
 
-      console.log("Managers:", res.users);
+      console.log("Managers:", res.users, "search:", searchTerm);
 
       setItems(res.users);
       setTotal(res.total);
@@ -42,14 +42,19 @@ function Managers() {
   };
 
   useEffect(() => {
-    fetchManagers();
-  }, []);
+    const timeout = setTimeout(() => {
+      setPage(1);
+      fetchManagers(1, search);
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
 
   const handleToggle = async (manager: Manager) => {
     try {
       const nextIsEnabled = !manager.isEnabled;
       const updated = await toggleManager(manager.id, nextIsEnabled);
-      
+
       console.log("API Response:", updated);
       setItems((prev) =>
         prev.map((item) =>
@@ -58,8 +63,20 @@ function Managers() {
             : item,
         ),
       );
-    } catch (error) {
+
+      const apiMessage =
+        (updated as any)?.message ||
+        (updated as any)?.msg ||
+        `User ${nextIsEnabled ? "enabled" : "disabled"} successfully.`;
+
+      showSuccessToast(apiMessage);
+    } catch (error: any) {
       console.error("Failed to toggle manager status:", error);
+      showErrorToast(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to update user status. Please try again.",
+      );
     }
   };
 
@@ -89,6 +106,8 @@ function Managers() {
             />
             <input
               type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search"
               className="h-10 sm:h-11.25 w-full sm:w-80 rounded-lg border border-[#DCDCDC] bg-white py-3 pl-9 pr-4 text-sm text-slate-700 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
@@ -226,15 +245,15 @@ function Managers() {
         total={total}
         onPrev={() => {
           if (page > 1) {
-            fetchManagers(page - 1);
+            fetchManagers(page - 1, search);
           }
         }}
         onNext={() => {
           if (page < totalPages) {
-            fetchManagers(page + 1);
+            fetchManagers(page + 1, search);
           }
         }}
-        onPageChange={(pageNumber) => fetchManagers(pageNumber)}
+        onPageChange={(pageNumber) => fetchManagers(pageNumber, search)}
       />
     </div>
   );
