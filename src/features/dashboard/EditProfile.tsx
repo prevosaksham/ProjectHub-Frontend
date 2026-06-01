@@ -68,7 +68,7 @@ function EditProfile() {
         if (active) {
           showErrorToast(
             error?.response?.data?.message ||
-              "Unable to load profile details.",
+            "Unable to load profile details.",
           );
         }
       } finally {
@@ -98,7 +98,7 @@ function EditProfile() {
     } catch (error: any) {
       showErrorToast(
         error?.response?.data?.message ||
-          "Failed to update profile. Please try again.",
+        "Failed to update profile. Please try again.",
       );
     }
   };
@@ -127,16 +127,16 @@ function EditProfile() {
           Back
         </button>
       </div>
+      {loadingProfile ? (
+        <Loader />
+      ) : (
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+          <div className="w-full space-y-4 rounded-2xl bg-white p-4 shadow-[0px_4px_16px_0px_#00000014] sm:p-5 lg:p-6">
+            <h2 className="mb-2 font-[Poppins] text-[16px] font-semibold leading-[100%] text-[#161616]">
+              Profile Information
+            </h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-        <div className="w-full space-y-4 rounded-2xl bg-white p-4 shadow-[0px_4px_16px_0px_#00000014] sm:p-5 lg:p-6">
-          <h2 className="mb-2 font-[Poppins] text-[16px] font-semibold leading-[100%] text-[#161616]">
-            Profile Information
-          </h2>
 
-          {loadingProfile ? (
-            <Loader className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-5" />
-          ) : (
             <div className="mt-3 grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
               <div>
                 <label className="mb-2 block font-[Poppins] text-[14px] font-medium leading-[100%] text-[#444444]">
@@ -195,7 +195,7 @@ function EditProfile() {
                   render={({ field }) => (
                     <Select
                       {...field}
-                       isDisabled={true}
+                      isDisabled={true}
                       value={
                         roleOptions.find(
                           (option) => option.value === field.value,
@@ -222,7 +222,7 @@ function EditProfile() {
                 />
                 {errors.role && (
                   <p className="mt-1 text-sm text-red-500">
-                    
+
                     {errors.role.message}
                   </p>
                 )}
@@ -251,28 +251,28 @@ function EditProfile() {
                 )}
               </div>
             </div>
-          )}
-        </div>
+          </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
-          <button
-            type="button"
-            onClick={() => navigate("/profile")}
-            className="h-[45px] w-full rounded-lg border border-slate-300 bg-white px-5 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:w-auto"
-          >
-            Cancel
-          </button>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={() => navigate("/profile")}
+              className="h-11.25 w-full rounded-lg border border-slate-300 bg-white px-5 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:w-auto"
+            >
+              Cancel
+            </button>
 
-          <button
-            type="submit"
-            disabled={isSubmitting || loadingProfile}
-            className="inline-flex h-[45px] w-full items-center justify-center gap-2 rounded-[8px] bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)] px-6 font-[Poppins] text-[14px] font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[135px]"
-          >
-            <FiSave />
-            {isSubmitting ? "Saving..." : "Save"}
-          </button>
-        </div>
-      </form>
+            <button
+              type="submit"
+              disabled={isSubmitting || loadingProfile}
+              className="inline-flex h-11.25 w-full items-center justify-center gap-2 rounded-lg bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)] px-6 font-[Poppins] text-[14px] font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-33.75"
+            >
+              <FiSave />
+              {isSubmitting ? "Saving..." : "Save"}
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }

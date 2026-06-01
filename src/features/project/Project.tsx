@@ -65,10 +65,6 @@ function Projects() {
   };
 
   useEffect(() => {
-    fetchProjects(1, search);
-  }, []);
-
-  useEffect(() => {
     const timeout = setTimeout(() => {
       setPage(1);
       fetchProjects(1, search);
@@ -133,7 +129,7 @@ function Projects() {
           {userRole !== "MANAGER" && (
             <button
               onClick={() => navigate("/projects/add-edit")}
-              className="inline-flex h-10 sm:h-11.25 items-center gap-2 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm font-medium text-white whitespace-nowrap"
+              className="inline-flex h-10 sm:h-11.25 items-center gap-2 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm font-medium text-white whitespace-nowrap cursor-pointer"
               style={{
                 background: "linear-gradient(90deg, #0059FF 0%, #003699 100%)",
               }}
@@ -253,7 +249,7 @@ function Projects() {
                         <div className="inline-flex items-center justify-center gap-2">
                           <button
                             onClick={() => navigate(`/projects/view/${p.id}`)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#EEF4FF] text-[#0059FF] hover:bg-[#dde9ff]"
+                            className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#EEF4FF] text-[#0059FF] hover:bg-[#dde9ff] cursor-pointer"
                           >
                             <FiEye size={16} />
                           </button>
@@ -263,7 +259,7 @@ function Projects() {
                                 state: { projectId: p.id },
                               })
                             }
-                            className="relative flex h-8 w-8 items-center justify-center rounded-lg gap-2 p-2 bg-[#EEF4FF] text-[#0059FF] hover:bg-[#dde9ff]"
+                            className="relative flex h-8 w-8 items-center justify-center rounded-lg gap-2 p-2 bg-[#EEF4FF] text-[#0059FF] hover:bg-[#dde9ff] cursor-pointer"
                           >
                             <FiEdit2 size={16} />
                             {userRole !== "ADMIN" && !p.isSetupCompleted && (
@@ -274,7 +270,7 @@ function Projects() {
                           {userRole === "ADMIN" && (
                             <button
                               onClick={() => handleToggle(p)}
-                              className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+                              className={`flex h-8 w-8 items-center justify-center rounded-lg cursor-pointer ${
                                 p.isEnabled
                                   ? "bg-[#E8F5E9] text-[#2370ff] hover:bg-[#d7efd7]"
                                   : "bg-[#F5F5F5] text-[#6B7280] hover:bg-[#e5e7eb]"

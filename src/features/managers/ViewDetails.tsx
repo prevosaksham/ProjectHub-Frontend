@@ -96,7 +96,7 @@ function ViewDetails() {
           className="inline-flex items-center gap-2 px-4 py-2 
           font-[Poppins] font-medium text-[14px] leading-[120%]
           tracking-[-0.01em] text-[#7A7A7A] hover:bg-slate-50 
-          rounded-lg"
+          rounded-lg cursor-pointer"
         >
           <FiArrowLeft />
           Back

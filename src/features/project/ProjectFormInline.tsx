@@ -466,7 +466,7 @@ export default function ProjectFormInline({
 
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 px-4 font-[Poppins] font-medium text-[14px] leading-[120%] tracking-[-0.01em] text-[#7A7A7A] hover:bg-slate-50 self-start sm:self-auto"
+            className="inline-flex items-center gap-2 px-4 font-[Poppins] font-medium text-[14px] leading-[120%] tracking-[-0.01em] text-[#7A7A7A] hover:bg-slate-50 self-start sm:self-auto cursor-pointer"
           >
             <FiArrowLeft />
             <span>Back</span>
@@ -823,7 +823,7 @@ export default function ProjectFormInline({
                     className="rounded-xl border border-[#0059FF] bg-white px-4 py-2 
              font-[Poppins] font-medium text-[14px] 
              leading-[100%] tracking-normal text-center align-middle 
-             text-[#0059FF] hover:bg-blue-50 transition"
+             text-[#0059FF] hover:bg-blue-50 transition cursor-pointer"
                   >
                     Add
                   </button>
@@ -948,7 +948,7 @@ export default function ProjectFormInline({
                               setPreviewDocument(doc as any);
                             }}
                             title="View document"
-                            className="flex h-7 w-7 items-center justify-center rounded-md bg-white"
+                            className="flex h-7 w-7 items-center justify-center rounded-md bg-white cursor-pointer"
                           >
                             <FiEye size={14} className="text-[#0059FF]" />
                           </button>
@@ -957,7 +957,7 @@ export default function ProjectFormInline({
                             <button
                               type="button"
                               onClick={() => removeDocument(doc.id)}
-                              className="flex h-7 w-7 items-center justify-center rounded-md bg-white"
+                              className="flex h-7 w-7 items-center justify-center rounded-md bg-white cursor-pointer"
                             >
                               <FiTrash2
                                 size={14}
@@ -991,7 +991,7 @@ export default function ProjectFormInline({
                 className="w-24.75 h-11.25 px-6 py-3 rounded-lg border border-[#7A7A7A] 
                  bg-white font-[Poppins] font-medium text-[14px] 
                  leading-[100%] tracking-normal text-center align-middle 
-                 text-[#7A7A7A] hover:bg-gray-50 transition"
+                 text-[#7A7A7A] hover:bg-gray-50 transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -1005,7 +1005,7 @@ export default function ProjectFormInline({
                  leading-[100%] tracking-normal text-center align-middle 
                  text-white 
                  shadow-[0px_2px_6px_rgba(0,0,0,0.15)] 
-                 hover:opacity-90 transition"
+                 hover:opacity-90 transition cursor-pointer"
                 style={{
                   borderImage:
                     "linear-gradient(90deg, #6B9FFF 0%, #0059FF 100%) 1",
