@@ -15,6 +15,7 @@ import plusIcon from "../../assets/plus icon.png";
 import StatusBadge from "./StatusBadge";
 import type { Project } from "./types/project.types";
 import { listProjects, toggleProject } from "./api/projectApi";
+import { showErrorToast, showSuccessToast } from "../../utils/toast";
 import Loader from "../../components/common/Loader";
 import Pagination from "../../components/common/Pagination";
 import EmptyState from "../../components/Emptyset";
@@ -85,9 +86,21 @@ function Projects() {
             : item,
         ),
       );
+
+      const apiMessage =
+        (updated as any)?.message ||
+        (updated as any)?.msg ||
+        `Project ${nextIsEnabled ? "enabled" : "disabled"} successfully.`;
+
+      showSuccessToast(apiMessage);
       window.dispatchEvent(new Event("projectUpdated"));
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to toggle project state:", error);
+      showErrorToast(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to update project status. Please try again.",
+      );
     }
   };
 
