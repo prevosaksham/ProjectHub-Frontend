@@ -49,6 +49,13 @@ const priorities: { value: ProjectPriority; label: string }[] = [
   { value: "CRITICAL", label: "Critical" },
 ];
 
+const generateId = () => {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `doc-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+};
+
 export default function ProjectFormInline({
   project,
   isEditMode,
@@ -251,7 +258,7 @@ export default function ProjectFormInline({
         "";
 
       return {
-        id: d?.id || d?._id || d?.documentId || crypto.randomUUID(),
+        id: d?.id || d?._id || d?.documentId || generateId(),
         projectId: d?.projectId || d?.project_id || "",
         filename: inferredFilename,
         originalName:
@@ -361,7 +368,7 @@ export default function ProjectFormInline({
       setUploadingFile(true);
 
       const selectedDocs = Array.from(files).map((file) => ({
-        id: crypto.randomUUID(),
+        id: generateId(),
         originalName: file.name,
         size: file.size,
         file,
