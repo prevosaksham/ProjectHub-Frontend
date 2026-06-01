@@ -447,6 +447,11 @@ export default function ProjectFormInline({
     setDocuments((prev) => prev.filter((doc) => doc.id !== id));
   };
 
+  const showAssignedTo =
+  userRole === "ADMIN" ||
+  (userRole === "LEADERSHIP" &&
+    (!isEditing || project?.canManageMembers));
+
   return (
     <div className="">
       <div className=" ">
@@ -524,7 +529,7 @@ export default function ProjectFormInline({
                     {errors.description.message}
                   </p>
                 )}
-                {userRole == "ADMIN" && (
+                {showAssignedTo && (
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       Assigned To&nbsp;

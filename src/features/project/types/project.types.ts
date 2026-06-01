@@ -54,6 +54,8 @@ export interface Project {
   isEnabled?: boolean;
   members?: ProjectMember[];
   remarks: Remark[];
+  createdBy:CreatedBy
+  canManageMembers: boolean;
   // createdAt: string;
   // updatedAt: string;
 }
@@ -65,6 +67,10 @@ export type Remark = {
     name: string;
   };
 };
+
+type CreatedBy={
+  role:string
+}
 
 export interface CreateProjectPayload {
   name: string;
