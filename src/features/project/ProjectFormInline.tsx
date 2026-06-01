@@ -392,7 +392,6 @@ export default function ProjectFormInline({
         clearErrors("assignedTo" as any);
       }
     } else {
-      // Non-admin: require developers and documents and other required fields handled by react-hook-form
       if (developers.length === 0) {
         const message = "At least one developer is required";
         setError("developers" as any, { type: "required", message });
