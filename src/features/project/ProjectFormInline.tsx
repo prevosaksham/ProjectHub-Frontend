@@ -818,7 +818,7 @@ export default function ProjectFormInline({
                         className="flex items-center gap-2 sm:grid sm:grid-cols-[80px_1fr] sm:gap-1"
                       >
                         <div
-                          className={`flex shrink-0 w-[55px] h-[30px] items-center justify-center rounded-[26px] px-4 py-1.5 text-xs font-bold ${env.color}`}
+                          className={`flex shrink-0 w-13.75 h-7.5 items-center justify-center rounded-[26px] px-4 py-1.5 text-xs font-bold ${env.color}`}
                         >
                           {env.label}
                         </div>
@@ -843,7 +843,7 @@ export default function ProjectFormInline({
                             disabled={isViewOnly}
                             className={`${getInputClassName(
                               !!errors[env.name as keyof CreateProjectPayload],
-                            )} w-full min-w-[300px] border-none focus:outline-none focus:ring-0 font-[Poppins] placeholder:text-[#7A7A7A] placeholder:font-medium placeholder:text-[14px]`}
+                            )} w-full min-w-75 border-none focus:outline-none focus:ring-0 font-[Poppins] placeholder:text-[#7A7A7A] placeholder:font-medium placeholder:text-[14px]`}
                             placeholder={
                               env.label === "DEV"
                                 ? "Enter Dev URL"
