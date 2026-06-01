@@ -100,7 +100,7 @@ function AddManager() {
 
         <button
           onClick={() => navigate("/users")}
-          className="inline-flex items-center gap-2 px-4 py-2 font-[Poppins] font-medium text-[14px] leading-[120%] tracking-[-0.01em] text-[#7A7A7A] hover:bg-slate-50 self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-4 py-2 font-[Poppins] font-medium text-[14px] leading-[120%] tracking-[-0.01em] text-[#7A7A7A] hover:bg-slate-50 self-start sm:self-auto cursor-pointer"
         >
           <FiArrowLeft />
           <span>Back</span>
@@ -388,7 +388,7 @@ function AddManager() {
           <button
             type="button"
             onClick={() => navigate("/users")}
-            className="w-full sm:w-auto rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            className="w-full sm:w-auto rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer"
           >
             Cancel
           </button>
@@ -401,7 +401,7 @@ function AddManager() {
         px-6 py-3 font-[Poppins] font-medium text-[14px]
         leading-[100%] tracking-normal text-center text-white
         transition hover:opacity-90
-        disabled:cursor-not-allowed disabled:opacity-50"
+        disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </button>

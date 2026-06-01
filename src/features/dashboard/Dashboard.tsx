@@ -237,7 +237,7 @@ const dynamicTickInterval = Math.max(
                 <span className="text-base sm:text-lg font-semibold text-white font-[Poppins]">
                   {stat.label}
                 </span>
-                <span className="mt-2 sm:mt-[14px] text-3xl sm:text-4xl font-semibold text-white font-[Poppins]">
+                <span className="mt-2 sm:mt-3.5 text-3xl sm:text-4xl font-semibold text-white font-[Poppins]">
                   {stat.value}
                 </span>
               </div>

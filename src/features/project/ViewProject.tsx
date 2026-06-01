@@ -308,13 +308,13 @@ function ViewProject() {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 ">
-        <h1 className="mt-5 font-[Poppins] text-[20px] font-semibold leading-[100%] tracking-[0px] text-[#00076F]">
+        <h1 className="mt-5 font-[Poppins] text-[20px] font-semibold leading-[100%] tracking-normal text-[#00076F]">
           Project Details
         </h1>
 
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 px-4 font-[Poppins] font-medium text-[14px] leading-[120%] tracking-[-0.01em] text-[#7A7A7A] hover:bg-slate-50 self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-4 font-[Poppins] font-medium text-[14px] leading-[120%] tracking-[-0.01em] text-[#7A7A7A] hover:bg-slate-50 self-start sm:self-auto cursor-pointer"
         >
           <FiArrowLeft />
           <span>Back</span>
@@ -333,7 +333,7 @@ function ViewProject() {
             <div className="space-y-6">
               {projectData.map((item, index) => (
                 <div key={index} className="flex items-start gap-4">
-                  <div className="w-12 h-12 min-w-[48px] flex items-center justify-center rounded-lg bg-[#EAF2FF]">
+                  <div className="w-12 h-12 min-w-12 flex items-center justify-center rounded-lg bg-[#EAF2FF]">
                     {item.icon}
                   </div>
 
@@ -360,7 +360,7 @@ function ViewProject() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
               {bottomData.map((item, index) => (
                 <div key={index} className="flex items-start gap-4">
-                  <div className="w-12 h-12 min-w-[48px] flex items-center justify-center rounded-lg bg-[#EAF2FF]">
+                  <div className="w-12 h-12 min-w-12 flex items-center justify-center rounded-lg bg-[#EAF2FF]">
                     {item.icon}
                   </div>
 
@@ -369,7 +369,7 @@ function ViewProject() {
                       {item.label}
                     </p>
 
-                    <p className="font-medium text-sm sm:text-base leading-6 text-[#1E1E1E] break-words">
+                    <p className="font-medium text-sm sm:text-base leading-6 text-[#1E1E1E] wrap-break-word">
                       {item.value}
                     </p>
                   </div>
@@ -463,7 +463,7 @@ function ViewProject() {
                         onClick={() => setPreviewDocument(doc)}
                         className="ml-3"
                       >
-                        <Eye size={20} className="text-[#00076F]" />
+                        <Eye size={20} className="text-[#00076F] cursor-pointer" />
                       </button>
                     </div>
                   );
@@ -512,7 +512,7 @@ function ViewProject() {
               transition-all
               w-full sm:w-auto
               self-stretch sm:self-auto
-              h-16 sm:h-15
+              h-16 sm:h-15 cursor-pointer
             "
                   disabled={remark.trim() === "" || remarkLoading}
                   onClick={() => handleRemarkSave(remark)}
@@ -611,7 +611,7 @@ function ViewProject() {
             </div>
 
             {/* Body */}
-            <div className="max-h-[350px] overflow-y-auto px-5 py-4">
+            <div className="max-h-87.5 overflow-y-auto px-5 py-4">
               <div className="space-y-3">
                 {project?.developers?.map(
                   (developer: string, index: number) => (
