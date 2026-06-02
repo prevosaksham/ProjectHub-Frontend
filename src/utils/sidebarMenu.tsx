@@ -14,9 +14,10 @@ export const sidebarMenu: SidebarMenuItem[] = [
     path: "/dashboard",
     icon: <FiHome />,
     roles: [
-      ROLES.ADMIN,
+      ROLES.SUPER_ADMIN,
       ROLES.MANAGER,
       ROLES.DEVELOPER,
+      ROLES.ADMIN,
     ],
   },
 
@@ -25,6 +26,7 @@ export const sidebarMenu: SidebarMenuItem[] = [
     path: "/projects",
     icon: <FiFolder />,
     roles: [
+      ROLES.SUPER_ADMIN,
       ROLES.ADMIN,
     ],
   },
@@ -35,6 +37,7 @@ export const sidebarMenu: SidebarMenuItem[] = [
     icon: <FiFolder />,
     roles: [
       ROLES.MANAGER,
+      ROLES.LEADER,
     ],
   },
 
@@ -42,6 +45,6 @@ export const sidebarMenu: SidebarMenuItem[] = [
     label: "Users",
     path: "/users",
     icon: <FiUserCheck />,
-    roles: [ROLES.ADMIN],
+    roles: [ROLES.SUPER_ADMIN,ROLES.ADMIN],
   },
 ];

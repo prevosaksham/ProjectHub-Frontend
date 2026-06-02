@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { FiArrowLeft, FiX } from "react-icons/fi";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import Loader from "../../components/common/Loader";
+import SkeletonLoader from "../../components/common/SkeletonLoader";
 import { createProjectRemark, getProjectById } from "./api/projectApi";
 import type { Project, Remark } from "./types/project.types";
 import { extractDateTime } from "../../utils/contants";
@@ -172,7 +172,7 @@ function ViewProject() {
     }
   })();
   const userRole = String(currentUser?.role || "").toUpperCase();
-  const isAdmin = userRole === "ADMIN";
+  const isSUPER_ADMIN = userRole === "SUPER_ADMIN";
 
   const projectData = [
     {
@@ -185,28 +185,28 @@ function ViewProject() {
       label: "DESCRIPTION",
       value: project?.description || "-",
     },
-    ...(isAdmin
+    ...(isSUPER_ADMIN || userRole === "ADMIN"
       ? [
-          {
-            icon: <Users size={20} className="text-blue-600" />,
-            label: "ASSIGNED TO",
-            value:
-              assignedToList.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {assignedToList.map((name) => (
-                    <span
-                      key={name}
-                      className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700"
-                    >
-                      {name}
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                "-"
-              ),
-          },
-        ]
+        {
+          icon: <Users size={20} className="text-blue-600" />,
+          label: "ASSIGNED TO",
+          value:
+            assignedToList.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {assignedToList.map((name) => (
+                  <span
+                    key={name}
+                    className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700"
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              "-"
+            ),
+        },
+      ]
       : []),
     {
       icon: <Users size={20} className="text-blue-600" />,
@@ -322,7 +322,7 @@ function ViewProject() {
       </div>
 
       {loading ? (
-        <Loader />
+        <SkeletonLoader type="project-details" />
       ) : (
         <>
           <div className="w-full p-4 sm:p-5 lg:p-6 bg-white rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
@@ -478,116 +478,116 @@ function ViewProject() {
               )}
             </div>
           </div>
-          <div className="w-full p-4 sm:p-5 lg:p-6 bg-white rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
-            <h1 className="font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-4">
-              Remarks
-            </h1>
+          {userRole !== "LEADERSHIP" && project?.createdBy && project?.createdBy?.role !== "LEADERSHIP" &&
+            (<div className="w-full p-4 sm:p-5 lg:p-6 bg-white rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
+              <h1 className="font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-4">
+                Remarks
+              </h1>
 
-            {/* Input Section */}
-            {userRole !== "ADMIN" && (
+              {/* Input Section */}
+
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-start mb-5">
                 <textarea
                   placeholder="Enter Here..."
                   value={remark}
                   onChange={(e) => setRemark(e.target.value)}
                   className="
-              w-full
-              border border-gray-300
-              rounded-xl
-              p-3 sm:p-4
-              text-sm sm:text-base
-              outline-none
-              resize-none
-              h-16 sm:h-15
-              focus:ring-2 focus:ring-blue-500
-            "
+                    w-full
+                    border border-gray-300
+                    rounded-xl
+                    p-3 sm:p-4
+                    text-sm sm:text-base
+                    outline-none
+                    resize-none
+                    h-16 sm:h-15
+                    focus:ring-2 focus:ring-blue-500
+                  "
                 />
 
                 <button
                   className="
-              bg-blue-600
-              hover:bg-blue-700
-              text-white
-              px-5 sm:px-6
-              py-3
-              rounded-xl
-              font-medium
-              transition-all
-              w-full sm:w-auto
-              self-stretch sm:self-auto
-              h-16 sm:h-15 cursor-pointer
-            "
+                  bg-blue-600
+                  hover:bg-blue-700
+                  text-white
+                  px-5 sm:px-6
+                  py-3
+                  rounded-xl
+                  font-medium
+                  transition-all
+                  w-full sm:w-auto
+                  self-stretch sm:self-auto
+                  h-16 sm:h-15 cursor-pointer
+                "
                   disabled={remark.trim() === "" || remarkLoading}
                   onClick={() => handleRemarkSave(remark)}
                 >
                   {remarkLoading ? "Saving..." : "Save"}
                 </button>
               </div>
-            )}
 
-            {/* Remarks List */}
-            <div className="max-h-80 overflow-y-auto space-y-4 pr-1">
-              {project?.remarks && project?.remarks?.length > 0 ? (
-                project?.remarks?.map((item: Remark) => (
-                  <div
-                    key={item?.createdAt}
-                    className="bg-[#F5F5F5] rounded-2xl p-4 sm:p-5"
-                  >
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="
-                    w-8
-                    h-8
-                    rounded-[20px]
-                    flex
-                    items-center
-                    justify-center
-                    bg-white
-                  "
-                        >
-                          <User size={14} className="text-blue-500" />
+              {/* Remarks List */}
+              <div className="max-h-80 overflow-y-auto space-y-4 pr-1">
+                {project?.remarks?.length ? (
+                  project?.remarks?.map((item: Remark) => (
+                    <div
+                      key={item?.createdAt}
+                      className="bg-[#F5F5F5] rounded-2xl p-4 sm:p-5"
+                    >
+                      {/* Header */}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="
+                            w-8
+                            h-8
+                            rounded-[20px]
+                            flex
+                            items-center
+                            justify-center
+                            bg-white
+                          "
+                          >
+                            <User size={14} className="text-blue-500" />
+                          </div>
+
+                          <h3
+                            className="
+                            font-[Poppins]
+                            font-medium
+                            text-[14px]
+                            text-[#7A7A7A]
+                          "
+                          >
+                            {item?.addedBy?.name}
+                          </h3>
                         </div>
 
-                        <h3
-                          className="
-                    font-[Poppins]
-                    font-medium
-                    text-[14px]
-                    text-[#7A7A7A]
-                  "
-                        >
-                          {item?.addedBy?.name}
-                        </h3>
+                        <span className="text-xs sm:text-sm text-gray-500">
+                          {extractDateTime(item.createdAt).date}{" "}
+                          {extractDateTime(item.createdAt).time}
+                        </span>
                       </div>
 
-                      <span className="text-xs sm:text-sm text-gray-500">
-                        {extractDateTime(item.createdAt).date}{" "}
-                        {extractDateTime(item.createdAt).time}
-                      </span>
+                      {/* Remark Text */}
+                      <p
+                        className="
+                        font-[Poppins]
+                        font-medium
+                        text-[14px]
+                        text-[#161616]
+                      "
+                      >
+                        {item?.remark}
+                      </p>
                     </div>
-
-                    {/* Remark Text */}
-                    <p
-                      className="
-                font-[Poppins]
-                font-medium
-                text-[14px]
-                text-[#161616]
-              "
-                    >
-                      {item?.remark}
-                    </p>
+                  ))
+                ) : (
+                  <div className="rounded-2xl bg-[#f9fafc] px-4 py-6 text-sm text-slate-500">
+                    No remarks added yet.
                   </div>
-                ))
-              ) : (
-                <div className="rounded-2xl bg-[#f9fafc] px-4 py-6 text-sm text-slate-500">
-                  No remarks added yet.
-                </div>
-              )}
-            </div>
-          </div>
+                )}
+              </div>
+            </div>)}
         </>
       )}
       {openDevelopersModal && (

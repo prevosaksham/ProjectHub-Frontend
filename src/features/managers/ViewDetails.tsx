@@ -19,11 +19,11 @@ import { listProjectsForUser } from "../project/api/projectApi";
 import StatusBadge from "../project/StatusBadge";
 import PriorityBadge from "../project/PriorityBadge";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import Loader from "../../components/common/Loader";
+import SkeletonLoader from "../../components/common/SkeletonLoader";
 
 interface Manager {
   name?: string;
-  designation?: string;
+  role?: string;
   email?: string;
   empId?: string;
   mobileNumber?: string;
@@ -104,7 +104,7 @@ function ViewDetails() {
       </div>
       {/* Loading / Error */}
       {loading ? (
-        <Loader />
+        <SkeletonLoader type="card" count={4} />
       ) : error ? (
         <div className="p-10 text-center text-red-600">{error}</div>
       ) : (
@@ -123,7 +123,7 @@ function ViewDetails() {
                     {manager?.name || "—"}
                   </h3>
                   <p className="text-sm text-blue-100">
-                    {manager?.designation || "—"}
+                    {manager?.role || "—"}
                   </p>
                 </div>
               </div>
@@ -181,8 +181,8 @@ function ViewDetails() {
                         </h4>
 
                         {/* <p className="mt-1 truncate text-sm text-slate-500">
-        {project.description || "No description available."}
-      </p> */}
+                          {project.description || "No description available."}
+                        </p> */}
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">

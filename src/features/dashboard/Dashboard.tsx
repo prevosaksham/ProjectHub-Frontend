@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { getDashboardApi } from "../dashboard/api/DashboardApi";
 import Highcharts from "highcharts";
 import { HighchartsReact } from "highcharts-react-official";
-import Loader from "../../components/common/Loader";
 
 interface KpiTile {
   label: string;
@@ -74,7 +73,40 @@ function Dashboard() {
   }, []);
 
   if (loading) {
-    return <Loader />;
+    return (
+      <div className="p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-semibold text-[#00076F] font-[Poppins]">
+          Dashboard
+        </h2>
+
+        {/* KPI Skeleton Loaders */}
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {[...Array(3)].map((_, idx) => (
+            <div
+              key={idx}
+              className="relative overflow-hidden rounded-2xl p-5 sm:p-7 bg-white border border-slate-200 shadow-lg"
+            >
+              <div className="relative flex items-center justify-between gap-4">
+                <div className="flex flex-col gap-3 flex-1">
+                  {/* Label skeleton */}
+                  <div className="h-5 w-32 bg-linear-to-r from-slate-200 to-slate-100 rounded animate-pulse"></div>
+                  {/* Value skeleton */}
+                  <div className="h-10 w-24 bg-linear-to-r from-slate-300 to-slate-200 rounded animate-pulse"></div>
+                </div>
+                {/* Icon circle skeleton */}
+                <div className="flex h-12 w-12 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-linear-to-r from-slate-200 to-slate-100 animate-pulse"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Graph skeleton */}
+        <div className="mt-5 rounded-none bg-white border border-[#ECECEC] px-4 py-4">
+          <div className="h-6 w-40 bg-linear-to-r from-slate-300 to-slate-200 rounded mb-4 animate-pulse"></div>
+          <div className="h-72 w-full bg-linear-to-r from-slate-100 to-slate-50 rounded animate-pulse"></div>
+        </div>
+      </div>
+    );
   }
 
   const graphData = dashboard?.graphData ?? [];

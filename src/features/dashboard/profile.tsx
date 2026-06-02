@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiEdit2, FiLock } from "react-icons/fi";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import Loader from "../../components/common/Loader";
+import SkeletonLoader from "../../components/common/SkeletonLoader";
 import { showErrorToast } from "../../utils/toast";
 import { getProfile, readStoredUser } from "./api/profileApi";
 import type { ProfileUser } from "./api/profileApi";
@@ -48,7 +48,6 @@ function Profile() {
     { label: "Full Name", value: profile?.name },
     { label: "Email", value: profile?.email },
     { label: "Employee ID", value: profile?.empId },
-    { label: "Designation", value: profile?.designation },
     { label: "Role", value: profile?.role },
     { label: "Mobile Number", value: profile?.mobileNumber },
   ];
@@ -63,7 +62,7 @@ function Profile() {
         </h1>
         <div className="flex flex-col gap-3 sm:flex-row">
           <button type="button" onClick={() => navigate("/profile/edit")}
-            className="inline-flex h-11.25 w-full items-center justify-center gap-2 rounded-lg bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)] px-5 font-[Poppins] text-[14px] font-medium text-white transition hover:opacity-90 sm:w-auto"
+            className="inline-flex h-11.25 w-full items-center justify-center gap-2 rounded-lg bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)] px-5 font-[Poppins] text-[14px] font-medium text-white transition hover:opacity-90 sm:w-auto cursor-pointer"
           >
             <FiEdit2 />
             Edit
@@ -72,7 +71,7 @@ function Profile() {
           <button
             type="button"
             onClick={() => navigate("/change-password")}
-            className="inline-flex h-11.25 w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-5 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:w-auto"
+            className="inline-flex h-11.25 w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-5 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:w-auto cursor-pointer"
           >
             <FiLock />
             Change Password
@@ -80,7 +79,7 @@ function Profile() {
         </div>
       </div>
       {loadingProfile ? (
-        <Loader />
+        <SkeletonLoader type="profile-form" count={3} />
       ) : (
         <div className="mt-4 w-full space-y-4 rounded-2xl bg-white p-4 shadow-[0px_4px_16px_0px_#00000014] sm:p-5 lg:p-6">
           <h2 className="mb-2 font-[Poppins] text-[16px] font-semibold leading-[100%] text-[#161616]">

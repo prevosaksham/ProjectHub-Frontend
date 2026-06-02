@@ -23,7 +23,7 @@ import type {
   ProjectStatus,
 } from "./types/project.types";
 import { useNavigate } from "react-router-dom";
-import Loader from "../../components/common/Loader";
+import SkeletonLoader from "../../components/common/SkeletonLoader";
 
 interface Props {
   project?: Project | null;
@@ -48,6 +48,13 @@ const priorities: { value: ProjectPriority; label: string }[] = [
   { value: "HIGH", label: "High" },
   { value: "CRITICAL", label: "Critical" },
 ];
+
+const generateId = () => {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `doc-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+};
 
 export default function ProjectFormInline({
   project,
@@ -76,7 +83,7 @@ export default function ProjectFormInline({
     }
   })();
   const userRole = String(currentUser?.role || "").toUpperCase();
-  const isAdmin = userRole === "ADMIN";
+  const isSUPER_ADMIN = userRole === "SUPER_ADMIN";
 
   const getDocumentUrl = (doc: ProjectDocument) => {
     const docBaseUrl = import.meta.env.VITE_DOC_VIEW_URL?.replace(/\/$/, "");
@@ -233,7 +240,7 @@ export default function ProjectFormInline({
       assignedTo: [],
       devUrl: "",
       uatUrl: "",
-      prodUrl: "",
+      prodUrl: ""
     } as any,
   });
 
@@ -251,7 +258,7 @@ export default function ProjectFormInline({
         "";
 
       return {
-        id: d?.id || d?._id || d?.documentId || crypto.randomUUID(),
+        id: d?.id || d?._id || d?.documentId || generateId(),
         projectId: d?.projectId || d?.project_id || "",
         filename: inferredFilename,
         originalName:
@@ -361,7 +368,7 @@ export default function ProjectFormInline({
       setUploadingFile(true);
 
       const selectedDocs = Array.from(files).map((file) => ({
-        id: crypto.randomUUID(),
+        id: generateId(),
         originalName: file.name,
         size: file.size,
         file,
@@ -382,8 +389,8 @@ export default function ProjectFormInline({
     setDeveloperError("");
     setDocumentError("");
 
-    if (isAdmin) {
-      // Admin: require Assigned To
+    if (isSUPER_ADMIN) {
+      // SUPER_ADMIN: require Assigned To
       if (assignedTo.length === 0) {
         const message = "Assigned To is required";
         setError("assignedTo" as any, { type: "required", message });
@@ -392,7 +399,6 @@ export default function ProjectFormInline({
         clearErrors("assignedTo" as any);
       }
     } else {
-      // Non-admin: require developers and documents and other required fields handled by react-hook-form
       if (developers.length === 0) {
         const message = "At least one developer is required";
         setError("developers" as any, { type: "required", message });
@@ -446,7 +452,7 @@ export default function ProjectFormInline({
   const removeDocument = (id: string) => {
     setDocuments((prev) => prev.filter((doc) => doc.id !== id));
   };
-
+  
   return (
     <div className="">
       <div className=" ">
@@ -459,7 +465,7 @@ export default function ProjectFormInline({
         />
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 ">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
           <h1 className="mt-5 font-[Poppins] text-[20px] font-semibold leading-[100%] tracking-normal text-[#00076F]">
             {pageTitle}
           </h1>
@@ -474,7 +480,7 @@ export default function ProjectFormInline({
         </div>
       </div>
       {loading ? (
-        <Loader />
+        <SkeletonLoader type="project-details" />
       ) : (
         <>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-6">
@@ -504,17 +510,15 @@ export default function ProjectFormInline({
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Description&nbsp;
-                  {userRole != "ADMIN" && (
                     <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                       *
                     </span>
-                  )}
                 </label>
                 <textarea
                   rows={3}
                   {...register(
                     "description",
-                    isAdmin ? {} : { required: "Description is required" },
+                    isSUPER_ADMIN ? {} : { required: "Description is required" },
                   )}
                   disabled={isViewOnly}
                   className={getInputClassName(!!errors.description)}
@@ -524,7 +528,7 @@ export default function ProjectFormInline({
                     {errors.description.message}
                   </p>
                 )}
-                {userRole == "ADMIN" && (
+                {(userRole == "SUPER_ADMIN"||userRole == "ADMIN") && (
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       Assigned To&nbsp;
@@ -552,6 +556,7 @@ export default function ProjectFormInline({
                           <Select<{ value: string; label: string }, true>
                             {...field}
                             isMulti
+                            hideSelectedOptions={true}
                             isDisabled={isViewOnly}
                             closeMenuOnSelect={false}
                             options={selectOptions}
@@ -606,7 +611,7 @@ export default function ProjectFormInline({
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Status&nbsp;
-                    {userRole != "ADMIN" && (
+                    {userRole != "SUPER_ADMIN" && (
                       <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                         *
                       </span>
@@ -615,11 +620,12 @@ export default function ProjectFormInline({
                   <Controller
                     name={"status" as any}
                     control={control}
-                    rules={isAdmin ? {} : { required: "Status is required" }}
+                    rules={isSUPER_ADMIN ? {} : { required: "Status is required" }}
                     render={({ field }) => (
                       <Select<{ value: ProjectStatus; label: string }, false>
                         {...field}
                         isDisabled={isViewOnly}
+                        hideSelectedOptions={true}
                         options={statuses.map((s) => ({
                           value: s.value,
                           label: s.label,
@@ -630,25 +636,81 @@ export default function ProjectFormInline({
                             .find((opt) => opt.value === field.value) ?? null
                         }
                         onChange={(opt) => field.onChange(opt ? opt.value : "")}
+                        classNamePrefix="project-select"
+                        menuPortalTarget={document.body}
+                        menuPosition="fixed"
+                        menuPlacement="auto"
                         styles={{
-                          control: (base) => ({
+                          control: (base, state) => ({
                             ...base,
-                            width: "100%",
-                            borderRadius: "0.75rem",
+                            minHeight: "46px",
+                            borderRadius: "8px",
                             borderColor: (errors as any).status
-                              ? "#ef4444"
-                              : "#cbd5e1",
-                            minHeight: "3rem",
+                              ? "#dc2626"
+                              : state.isFocused
+                                ? "#2563EB"
+                                : "#D1D5DB",
                             boxShadow: "none",
                             "&:hover": {
                               borderColor: (errors as any).status
-                                ? "#ef4444"
-                                : "#cbd5e1",
+                                ? "#dc2626"
+                                : "#2563EB",
                             },
                           }),
+
+                          valueContainer: (base) => ({
+                            ...base,
+                            padding: "0 12px",
+                          }),
+
+                          placeholder: (base) => ({
+                            ...base,
+                            color: "#6B7280",
+                          }),
+
+                          indicatorSeparator: () => ({
+                            display: "none",
+                          }),
+
+                          dropdownIndicator: (base) => ({
+                            ...base,
+                            color: "#6B7280",
+                          }),
+
+                          menuPortal: (base) => ({
+                            ...base,
+                            zIndex: 99999,
+                          }),
+
                           menu: (base) => ({
                             ...base,
-                            borderRadius: "0.75rem",
+                            borderRadius: "10px",
+                            overflow: "hidden",
+                            marginTop: "4px",
+                            paddingRight: "2px",
+                            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                          }),
+
+                          menuList: (base) => ({
+                            ...base,
+                            maxHeight: "180px",
+                            padding: 0,
+                            overflowY: "auto",
+                            scrollbarWidth: "thin",
+                            scrollbarColor: "#9CA3AF #F3F4F6",
+                          }),
+
+                          option: (base, state) => ({
+                            ...base,
+                            padding: "14px 16px",
+                            fontSize: "15px",
+                            cursor: "pointer",
+                            backgroundColor: state.isFocused
+                              ? "#DCEAFE"
+                              : state.isSelected
+                                ? "#DCEAFE"
+                                : "#FFFFFF",
+                            color: "#222222",
                           }),
                         }}
                         placeholder="Select status"
@@ -671,6 +733,7 @@ export default function ProjectFormInline({
                       <Select<{ value: ProjectPriority; label: string }, false>
                         {...field}
                         isDisabled={isViewOnly}
+                        hideSelectedOptions={true}
                         options={priorities.map((p) => ({
                           value: p.value,
                           label: p.label,
@@ -681,25 +744,81 @@ export default function ProjectFormInline({
                             .find((opt) => opt.value === field.value) ?? null
                         }
                         onChange={(opt) => field.onChange(opt ? opt.value : "")}
+                        classNamePrefix="project-select"
+                        menuPortalTarget={document.body}
+                        menuPosition="fixed"
+                        menuPlacement="auto"
                         styles={{
-                          control: (base) => ({
+                          control: (base, state) => ({
                             ...base,
-                            width: "100%",
-                            borderRadius: "0.75rem",
+                            minHeight: "46px",
+                            borderRadius: "8px",
                             borderColor: (errors as any).priority
-                              ? "#ef4444"
-                              : "#cbd5e1",
-                            minHeight: "3rem",
+                              ? "#dc2626"
+                              : state.isFocused
+                                ? "#2563EB"
+                                : "#D1D5DB",
                             boxShadow: "none",
                             "&:hover": {
                               borderColor: (errors as any).priority
-                                ? "#ef4444"
-                                : "#cbd5e1",
+                                ? "#dc2626"
+                                : "#2563EB",
                             },
                           }),
+
+                          valueContainer: (base) => ({
+                            ...base,
+                            padding: "0 12px",
+                          }),
+
+                          placeholder: (base) => ({
+                            ...base,
+                            color: "#6B7280",
+                          }),
+
+                          indicatorSeparator: () => ({
+                            display: "none",
+                          }),
+
+                          dropdownIndicator: (base) => ({
+                            ...base,
+                            color: "#6B7280",
+                          }),
+
+                          menuPortal: (base) => ({
+                            ...base,
+                            zIndex: 99999,
+                          }),
+
                           menu: (base) => ({
                             ...base,
-                            borderRadius: "0.75rem",
+                            borderRadius: "10px",
+                            overflow: "hidden",
+                            marginTop: "4px",
+                            paddingRight: "2px",
+                            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                          }),
+
+                          menuList: (base) => ({
+                            ...base,
+                            maxHeight: "180px",
+                            padding: 0,
+                            overflowY: "auto",
+                            scrollbarWidth: "thin",
+                            scrollbarColor: "#9CA3AF #F3F4F6",
+                          }),
+
+                          option: (base, state) => ({
+                            ...base,
+                            padding: "14px 16px",
+                            fontSize: "15px",
+                            cursor: "pointer",
+                            backgroundColor: state.isFocused
+                              ? "#DCEAFE"
+                              : state.isSelected
+                                ? "#DCEAFE"
+                                : "#FFFFFF",
+                            color: "#222222",
                           }),
                         }}
                         placeholder="Select priority"
@@ -715,7 +834,7 @@ export default function ProjectFormInline({
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Client Name&nbsp;
-                    {userRole != "ADMIN" && (
+                    {userRole != "SUPER_ADMIN" && (
                       <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                         *
                       </span>
@@ -724,7 +843,7 @@ export default function ProjectFormInline({
                   <input
                     {...register(
                       "clientName",
-                      isAdmin ? {} : { required: "Client name is required" },
+                      isSUPER_ADMIN ? {} : { required: "Client name is required" },
                     )}
                     disabled={isViewOnly}
                     className={getInputClassName(!!errors.clientName)}
@@ -760,7 +879,7 @@ export default function ProjectFormInline({
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     End Date&nbsp;
-                    {userRole != "ADMIN" && (
+                    {userRole != "SUPER_ADMIN" && (
                       <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                         *
                       </span>
@@ -770,7 +889,7 @@ export default function ProjectFormInline({
                     type="date"
                     {...register(
                       "endDate",
-                      isAdmin ? {} : { required: "End date is required" },
+                      isSUPER_ADMIN ? {} : { required: "End date is required" },
                     )}
                     disabled={isViewOnly}
                     className={getInputClassName(!!errors.endDate)}
@@ -787,11 +906,9 @@ export default function ProjectFormInline({
             <div className="card p-5 space-y-4 md:col-span-2 xl:col-span-3 bg-white  rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
               <label className="block font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-2">
                 Environment Links&nbsp;
-                {userRole != "ADMIN" && (
                   <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                     *
                   </span>
-                )}
               </label>
 
               <div className="space-y-4">
@@ -819,7 +936,7 @@ export default function ProjectFormInline({
                         className="flex items-center gap-2 sm:grid sm:grid-cols-[80px_1fr] sm:gap-1"
                       >
                         <div
-                          className={`flex shrink-0 w-[55px] h-[30px] items-center justify-center rounded-[26px] px-4 py-1.5 text-xs font-bold ${env.color}`}
+                          className={`flex shrink-0 w-13.75 h-7.5 items-center justify-center rounded-[26px] px-4 py-1.5 text-xs font-bold ${env.color}`}
                         >
                           {env.label}
                         </div>
@@ -828,23 +945,23 @@ export default function ProjectFormInline({
                           <input
                             {...register(
                               env.name as keyof CreateProjectPayload,
-                              isAdmin
+                              isSUPER_ADMIN
                                 ? {
-                                    validate: (value) =>
-                                      !value ||
-                                      validateUrl(value) ||
-                                      "Invalid URL",
-                                  }
+                                  validate: (value) =>
+                                    !value ||
+                                    validateUrl(value) ||
+                                    "Invalid URL",
+                                }
                                 : {
-                                    required: `${env.label} URL is required`,
-                                    validate: (value) =>
-                                      validateUrl(value) || "Invalid URL",
-                                  },
+                                  required: `${env.label} URL is required`,
+                                  validate: (value) =>
+                                    validateUrl(value) || "Invalid URL",
+                                },
                             )}
                             disabled={isViewOnly}
                             className={`${getInputClassName(
                               !!errors[env.name as keyof CreateProjectPayload],
-                            )} w-full min-w-[300px] border-none focus:outline-none focus:ring-0 font-[Poppins] placeholder:text-[#7A7A7A] placeholder:font-medium placeholder:text-[14px]`}
+                            )} w-full min-w-75 border-none focus:outline-none focus:ring-0 font-[Poppins] placeholder:text-[#7A7A7A] placeholder:font-medium placeholder:text-[14px]`}
                             placeholder={
                               env.label === "DEV"
                                 ? "Enter Dev URL"
@@ -874,11 +991,9 @@ export default function ProjectFormInline({
             <div className="card p-5 space-y-4 md:col-span-2 xl:col-span-3 bg-white  rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
               <label className="block font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-2">
                 Developers&nbsp;
-                {userRole != "ADMIN" && (
                   <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                     *
                   </span>
-                )}
               </label>
               <div className="flex gap-2">
                 <input
@@ -915,7 +1030,7 @@ export default function ProjectFormInline({
                       <button
                         type="button"
                         onClick={() => removeDeveloper(d)}
-                        className="ml-1"
+                        className="ml-1 cursor-pointer"
                       >
                         <FiX size={14} />
                       </button>
@@ -933,11 +1048,9 @@ export default function ProjectFormInline({
             <div className="card p-5 space-y-4 md:col-span-2 xl:col-span-3 bg-white rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
               <label className="block font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-2">
                 Documents&nbsp;
-                {userRole != "ADMIN" && (
                   <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                     *
                   </span>
-                )}
               </label>
 
               {/* 2 Column Layout */}

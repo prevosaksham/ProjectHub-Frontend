@@ -59,7 +59,7 @@ function Login() {
             <div className="flex w-full h-full gap-1 overflow-hidden">
               {/* COLUMN 1 */}
               <div className="w-2/12 flex flex-col gap-1 min-h-0 overflow-hidden">
-                <div className="flex-[147] min-h-0 overflow-hidden">
+                <div className="flex-147 min-h-0 overflow-hidden">
                   <img
                     src={img1}
                     alt=""
@@ -67,7 +67,7 @@ function Login() {
                   />
                 </div>
 
-                <div className="flex-[258] min-h-0 overflow-hidden">
+                <div className="flex-258 min-h-0 overflow-hidden">
                   <img
                     src={img2}
                     alt=""
@@ -75,7 +75,7 @@ function Login() {
                   />
                 </div>
 
-                <div className="flex-[258] min-h-0 overflow-hidden">
+                <div className="flex-258 min-h-0 overflow-hidden">
                   <img
                     src={img3}
                     alt=""
@@ -86,8 +86,8 @@ function Login() {
 
               {/* COLUMN 2 */}
               <div className="w-4/12 flex flex-col gap-1 min-h-0 overflow-hidden">
-                <div className="flex-[268] bg-gradient-to-br from-[#0D63FF] to-[#003ECB] p-3 xl:p-5 rounded-[20px] text-white flex flex-col justify-center overflow-hidden">
-                  <h4 className="font-semibold text-lg xl:text-[22px] leading-[32px]">
+                <div className="flex-268 bg-linear-to-br from-[#0D63FF] to-[#003ECB] p-3 xl:p-5 rounded-[20px] text-white flex flex-col justify-center overflow-hidden">
+                  <h4 className="font-semibold text-lg xl:text-[22px] leading-8">
                     Welcome To
                   </h4>
 
@@ -101,7 +101,7 @@ function Login() {
                   </p>
                 </div>
 
-                <div className="flex-[268] min-h-0 overflow-hidden">
+                <div className="flex-268 min-h-0 overflow-hidden">
                   <img
                     src={img4}
                     alt=""
@@ -109,7 +109,7 @@ function Login() {
                   />
                 </div>
 
-                <div className="flex-[163] min-h-0 overflow-hidden">
+                <div className="flex-163 min-h-0 overflow-hidden">
                   <img
                     src={img5}
                     alt=""
@@ -120,7 +120,7 @@ function Login() {
 
               {/* COLUMN 3 */}
               <div className="w-4/12 flex flex-col gap-1 min-h-0 overflow-hidden">
-                <div className="flex-[45] min-h-0 overflow-hidden">
+                <div className="flex-45 min-h-0 overflow-hidden">
                   <img
                     src={img6}
                     alt=""
@@ -128,7 +128,7 @@ function Login() {
                   />
                 </div>
 
-                <div className="flex-[268] min-h-0 overflow-hidden">
+                <div className="flex-268 min-h-0 overflow-hidden">
                   <img
                     src={img7}
                     alt=""
@@ -136,7 +136,7 @@ function Login() {
                   />
                 </div>
 
-                <div className="flex-[268] bg-gradient-to-br from-[#0D63FF] to-[#003ECB] p-3 xl:p-5 rounded-[20px] text-white flex flex-col justify-center overflow-hidden">
+                <div className="flex-268 bg-linear-to-br from-[#0D63FF] to-[#003ECB] p-3 xl:p-5 rounded-[20px] text-white flex flex-col justify-center overflow-hidden">
                   <h3 className="font-bold text-2xl xl:text-[40px]">120+</h3>
 
                   <p className="font-medium text-sm xl:text-[16px]">
@@ -152,7 +152,7 @@ function Login() {
                   </p>
                 </div>
 
-                <div className="flex-[93] min-h-0 overflow-hidden">
+                <div className="flex-93 min-h-0 overflow-hidden">
                   <img
                     src={img8}
                     alt=""
@@ -163,7 +163,7 @@ function Login() {
 
               {/* COLUMN 4 */}
               <div className="w-2/12 flex flex-col gap-1 min-h-0 overflow-hidden">
-                <div className="flex-[158] min-h-0 overflow-hidden">
+                <div className="flex-158 min-h-0 overflow-hidden">
                   <img
                     src={img9}
                     alt=""
@@ -171,7 +171,7 @@ function Login() {
                   />
                 </div>
 
-                <div className="flex-[268] min-h-0 overflow-hidden">
+                <div className="flex-268 min-h-0 overflow-hidden">
                   <img
                     src={img10}
                     alt=""
@@ -179,7 +179,7 @@ function Login() {
                   />
                 </div>
 
-                <div className="flex-[268] min-h-0 overflow-hidden">
+                <div className="flex-268 min-h-0 overflow-hidden">
                   <img
                     src={img11}
                     alt=""
@@ -205,13 +205,13 @@ function Login() {
       hover:scrollbar-thumb-[#0047d6]
     "
             >
-              <div className="w-full max-w-[480px] mx-auto">
+              <div className="w-full max-w-120 mx-auto">
                 {/* LOGO */}
                 <div className="mb-6 sm:mb-8">
                   <img
                     src={logo}
                     alt="logo"
-                    className="w-[120px] sm:w-[150px] md:w-[170px] mx-auto"
+                    className="w-30 sm:w-37.5 md:w-42.5 mx-auto"
                   />
                 </div>
 
@@ -233,8 +233,8 @@ function Login() {
                       Email Address
                     </label>
 
-                    <div className="flex h-[50px] sm:h-[52px] overflow-hidden rounded-xl border-2 border-[#d6deff] transition focus-within:border-[#0057ff]">
-                      <div className="flex w-[52px] sm:w-[55px] items-center justify-center bg-[#eef3ff] text-[#0057ff]">
+                    <div className="flex h-12.5 sm:h-13 overflow-hidden rounded-xl border-2 border-[#d6deff] transition focus-within:border-[#0057ff]">
+                      <div className="flex w-13 sm:w-13.75 items-center justify-center bg-[#eef3ff] text-[#0057ff]">
                         <FiMail size={18} />
                       </div>
 
@@ -255,8 +255,8 @@ function Login() {
                       Password
                     </label>
 
-                    <div className="flex h-[50px] sm:h-[52px] overflow-hidden rounded-xl border-2 border-[#d6deff] transition focus-within:border-[#0057ff]">
-                      <div className="flex w-[52px] sm:w-[55px] items-center justify-center bg-[#eef3ff] text-[#0057ff]">
+                    <div className="flex h-12.5 sm:h-13 overflow-hidden rounded-xl border-2 border-[#d6deff] transition focus-within:border-[#0057ff]">
+                      <div className="flex w-13 sm:w-13.75 items-center justify-center bg-[#eef3ff] text-[#0057ff]">
                         <FiLock size={18} />
                       </div>
 
@@ -297,7 +297,7 @@ function Login() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className={`flex h-[50px] sm:h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#0d63ff] to-[#003ecb] text-sm sm:text-base font-semibold text-white transition-all duration-300 ${
+                    className={`flex h-12.5 sm:h-13 w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#0d63ff] to-[#003ecb] text-sm sm:text-base font-semibold text-white transition-all duration-300 ${
                       loading
                         ? "cursor-not-allowed opacity-70"
                         : "hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(0,87,255,0.35)]"

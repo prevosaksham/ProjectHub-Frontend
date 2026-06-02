@@ -13,9 +13,11 @@ import {
 import plusIcon from "../../assets/plus icon.png";
 
 import StatusBadge from "./StatusBadge";
+import ProjectFormModal from "./ProjectFormModal";
 import type { Project } from "./types/project.types";
 import { listProjects, toggleProject } from "./api/projectApi";
-import Loader from "../../components/common/Loader";
+import { showErrorToast, showSuccessToast } from "../../utils/toast";
+import SkeletonLoader from "../../components/common/SkeletonLoader";
 import Pagination from "../../components/common/Pagination";
 import EmptyState from "../../components/Emptyset";
 
@@ -38,6 +40,8 @@ function Projects() {
     }
   })();
   const userRole = String(currentUser?.role || "").toUpperCase();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   // const user = JSON.parse(
   //   localStorage.getItem("user") || "{}"
@@ -85,9 +89,21 @@ function Projects() {
             : item,
         ),
       );
+
+      const apiMessage =
+        (updated as any)?.message ||
+        (updated as any)?.msg ||
+        `Project ${nextIsEnabled ? "enabled" : "disabled"} successfully.`;
+
+      showSuccessToast(apiMessage);
       window.dispatchEvent(new Event("projectUpdated"));
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to toggle project state:", error);
+      showErrorToast(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to update project status. Please try again.",
+      );
     }
   };
 
@@ -126,9 +142,12 @@ function Projects() {
             />
           </div>
 
-          {userRole !== "MANAGER" && (
+          {(userRole === "SUPER_ADMIN" || userRole === "ADMIN") && (
             <button
-              onClick={() => navigate("/projects/add-edit")}
+              onClick={() => {
+                setSelectedProject(null);
+                setModalOpen(true);
+              }}
               className="inline-flex h-10 sm:h-11.25 items-center gap-2 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm font-medium text-white whitespace-nowrap cursor-pointer"
               style={{
                 background: "linear-gradient(90deg, #0059FF 0%, #003699 100%)",
@@ -144,7 +163,7 @@ function Projects() {
 
       {/* Table */}
       {loading ? (
-        <Loader />
+        <SkeletonLoader type="table" count={5} />
       ) : (
         <div className="overflow-x-auto">
           {items.length === 0 ? (
@@ -214,7 +233,7 @@ function Projects() {
                               href={p.devUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 rounded bg-[#EEF4FF] px-2 py-1 text-xs font-medium text-[#0059FF]"
+                              className="inline-flex items-center gap-1 rounded border border-[#A9C5FF] bg-[#DCE8FF] px-2 py-1 text-xs font-semibold text-[#0047CC]"
                             >
                               DEV <FiExternalLink size={10} />
                             </a>
@@ -224,7 +243,7 @@ function Projects() {
                               href={p.uatUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 rounded bg-[#FFF4E5] px-2 py-1 text-xs font-medium text-[#B76E00]"
+                              className="inline-flex items-center gap-1 rounded border border-[#FFC978] bg-[#FFE8C2] px-2 py-1 text-xs font-semibold text-[#A65A00]"
                             >
                               UAT <FiExternalLink size={10} />
                             </a>
@@ -234,7 +253,7 @@ function Projects() {
                               href={p.prodUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 rounded bg-[#E8F5E9] px-2 py-1 text-xs font-medium text-[#2E7D32]"
+                              className="inline-flex items-center gap-1 rounded border border-[#9DD8A2] bg-[#D4F0D6] px-2 py-1 text-xs font-semibold text-[#1F6B24]"
                             >
                               PROD <FiExternalLink size={10} />
                             </a>
@@ -254,20 +273,25 @@ function Projects() {
                             <FiEye size={16} />
                           </button>
                           <button
-                            onClick={() =>
-                              navigate("/projects/add-edit", {
-                                state: { projectId: p.id },
-                              })
-                            }
+                            onClick={() => {
+                              if (userRole === "SUPER_ADMIN"|| userRole === "ADMIN") {
+                                setSelectedProject(p);
+                                setModalOpen(true);
+                              } else {
+                                navigate("/projects/add-edit", {
+                                  state: { projectId: p.id },
+                                });
+                              }
+                            }}
                             className="relative flex h-8 w-8 items-center justify-center rounded-lg gap-2 p-2 bg-[#EEF4FF] text-[#0059FF] hover:bg-[#dde9ff] cursor-pointer"
                           >
                             <FiEdit2 size={16} />
-                            {userRole !== "ADMIN" && !p.isSetupCompleted && (
+                            {(userRole !== "SUPER_ADMIN" && userRole !== "ADMIN") && !p.isSetupCompleted && (
                               <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-red-500"></span>
                             )}
                           </button>
 
-                          {userRole === "ADMIN" && (
+                          {(userRole === "SUPER_ADMIN" || userRole === "ADMIN") && (
                             <button
                               onClick={() => handleToggle(p)}
                               className={`flex h-8 w-8 items-center justify-center rounded-lg cursor-pointer ${
@@ -306,6 +330,12 @@ function Projects() {
           )}
         </div>
       )}
+      <ProjectFormModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        refresh={() => fetchProjects(1, search)}
+        project={selectedProject}
+      />
     </div>
   );
 }
