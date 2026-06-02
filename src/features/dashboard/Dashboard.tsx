@@ -18,15 +18,16 @@ import {
   type ChartOptions,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import Loader from "../../components/common/Loader";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const getNiceTickInterval = (maxValue: number) => {
-  if (maxValue <= 10) return 1;
+  // if (maxValue <= 10) return 1;
   const roughInterval = maxValue / 5;
   const magnitude = 10 ** Math.floor(Math.log10(roughInterval));
   const normalized = roughInterval / magnitude;
-  if (normalized <= 1) return magnitude;
+  // if (normalized <= 1) return magnitude;
   if (normalized <= 2) return 2 * magnitude;
   if (normalized <= 5) return 5 * magnitude;
   return 10 * magnitude;
@@ -53,17 +54,6 @@ interface DashboardData {
   graphData: GraphItem[];
 }
 
-// Fallback data using your numbers as Active, and Completed = 60% of Active
-const getFallbackGraphData = (): GraphItem[] => {
-  const months = ["January", "February", "March", "April", "May", "June", "July"];
-  const activeValues = [65, 59, 80, 82, 56, 55, 40];
-  return months.map((month, idx) => ({
-    month,
-    active: activeValues[idx],
-    completed: Math.floor(activeValues[idx] * 0.6),
-  }));
-};
-
 function Dashboard() {
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -73,23 +63,18 @@ function Dashboard() {
       setLoading(true);
       try {
         const data = await getDashboardApi();
-        let finalGraphData: GraphItem[] = [];
-
-        if (data?.graphData && data.graphData.length > 0) {
-          finalGraphData = data.graphData.map((item: any) => ({
-            month: item.month,
-            active: typeof item.active === "number" ? item.active : 0,
-            completed: typeof item.completed === "number" ? item.completed : 0,
-          }));
-        } else {
-          finalGraphData = getFallbackGraphData();
-        }
 
         setDashboard({
           totalProjects: data?.totalProjects ?? 0,
           activeProjects: data?.activeProjects ?? 0,
           completedProjects: data?.completedProjects ?? 0,
-          graphData: finalGraphData,
+          graphData: Array.isArray(data?.graphData)
+            ? data.graphData.map((item: Partial<GraphItem>) => ({
+                month: String(item.month ?? ""),
+                active: Number(item.active ?? 0),
+                completed: Number(item.completed ?? 0),
+              }))
+            : [],
         });
       } catch (error) {
         console.error("Dashboard API Error", error);
@@ -97,7 +82,7 @@ function Dashboard() {
           totalProjects: 0,
           activeProjects: 0,
           completedProjects: 0,
-          graphData: getFallbackGraphData(),
+          graphData: [],
         });
       } finally {
         setLoading(false);
@@ -132,7 +117,7 @@ function Dashboard() {
 
   if (loading) return <Loader />;
 
-  const graphData = dashboard?.graphData ?? getFallbackGraphData();
+  const graphData = dashboard?.graphData ?? [];
   const highestGraphValue = Math.max(
     ...graphData.flatMap((item) => [item.active, item.completed]),
     0
@@ -142,30 +127,15 @@ function Dashboard() {
     highestGraphValue === 0
       ? 5
       : Math.ceil(highestGraphValue / yAxisStepSize) * yAxisStepSize;
-  const monthLabelMap: Record<string, string> = {
-    Jan: "January",
-    Feb: "February",
-    Mar: "March",
-    Apr: "April",
-    May: "May",
-    Jun: "June",
-    Jul: "July",
-    Aug: "August",
-    Sep: "September",
-    Oct: "October",
-    Nov: "November",
-    Dec: "December",
-  };
-
   // Two datasets – grouped bars (Active & Completed per month)
   const chartData: ChartData<"bar"> = {
-    labels: graphData.map((item) => monthLabelMap[item.month] ?? item.month),
+    labels: graphData.map((item) => item.month),
     datasets: [
       {
         label: "Completed",
         data: graphData.map((item) => item.completed),
-        backgroundColor: "rgba(32, 138, 23, 0.16)",
-        borderColor: "#208A17",
+        backgroundColor: "#4d2d98ef",
+        borderColor: "#1B084A",
         borderWidth: 2,
         borderRadius: 0,
         borderSkipped: false,
@@ -176,8 +146,8 @@ function Dashboard() {
       {
         label: "Active",
         data: graphData.map((item) => item.active),
-        backgroundColor: "rgba(37, 45, 158, 0.16)",
-        borderColor: "#252D9E",
+        backgroundColor: "#4e56c6fe",
+        borderColor: " #0D1038",
         borderWidth: 2,
         borderRadius: 0,
         borderSkipped: false,
