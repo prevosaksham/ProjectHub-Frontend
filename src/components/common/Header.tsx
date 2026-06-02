@@ -92,7 +92,9 @@ function Header({ collapsed, onToggle, onMobileOpen }: HeaderProps) {
             <User size={20} className="text-gray-700 hidden sm:block" />
           </div>
 
-          <h2 className="block max-w-25 truncate text-[#020202]">{Username}</h2>
+          <h2 className="block truncate text-[#020202]">
+            {Username.slice(0, 20)}
+          </h2>
 
           <ChevronDown size={16} className="text-gray-500" />
         </button>
