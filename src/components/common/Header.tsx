@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { User, ChevronDown } from "lucide-react";
 import { FiMenu } from "react-icons/fi";
 import toggleImg from "../../assets/Toggle-img.png";
+import menuImg from "../../assets/menu.png";
 
 interface HeaderProps {
   collapsed: boolean;
@@ -66,7 +67,7 @@ function Header({ collapsed, onToggle, onMobileOpen }: HeaderProps) {
           aria-label="Toggle sidebar"
         >
           {collapsed ? (
-            <FiMenu size={20} />
+            <img src={menuImg} alt="Menu" className="h-8 w-8 object-contain" />
           ) : (
             <img
               src={toggleImg}
