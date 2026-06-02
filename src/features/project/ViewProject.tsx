@@ -489,32 +489,32 @@ function ViewProject() {
                   value={remark}
                   onChange={(e) => setRemark(e.target.value)}
                   className="
-              w-full
-              border border-gray-300
-              rounded-xl
-              p-3 sm:p-4
-              text-sm sm:text-base
-              outline-none
-              resize-none
-              h-16 sm:h-15
-              focus:ring-2 focus:ring-blue-500
-            "
+                    w-full
+                    border border-gray-300
+                    rounded-xl
+                    p-3 sm:p-4
+                    text-sm sm:text-base
+                    outline-none
+                    resize-none
+                    h-16 sm:h-15
+                    focus:ring-2 focus:ring-blue-500
+                  "
                 />
 
                 <button
                   className="
-              bg-blue-600
-              hover:bg-blue-700
-              text-white
-              px-5 sm:px-6
-              py-3
-              rounded-xl
-              font-medium
-              transition-all
-              w-full sm:w-auto
-              self-stretch sm:self-auto
-              h-16 sm:h-15 cursor-pointer
-            "
+                  bg-blue-600
+                  hover:bg-blue-700
+                  text-white
+                  px-5 sm:px-6
+                  py-3
+                  rounded-xl
+                  font-medium
+                  transition-all
+                  w-full sm:w-auto
+                  self-stretch sm:self-auto
+                  h-16 sm:h-15 cursor-pointer
+                "
                   disabled={remark.trim() === "" || remarkLoading}
                   onClick={() => handleRemarkSave(remark)}
                 >
@@ -535,25 +535,25 @@ function ViewProject() {
                         <div className="flex items-center gap-2">
                           <div
                             className="
-                    w-8
-                    h-8
-                    rounded-[20px]
-                    flex
-                    items-center
-                    justify-center
-                    bg-white
-                  "
+                            w-8
+                            h-8
+                            rounded-[20px]
+                            flex
+                            items-center
+                            justify-center
+                            bg-white
+                          "
                           >
                             <User size={14} className="text-blue-500" />
                           </div>
 
                           <h3
                             className="
-                    font-[Poppins]
-                    font-medium
-                    text-[14px]
-                    text-[#7A7A7A]
-                  "
+                            font-[Poppins]
+                            font-medium
+                            text-[14px]
+                            text-[#7A7A7A]
+                          "
                           >
                             {item?.addedBy?.name}
                           </h3>
@@ -568,11 +568,11 @@ function ViewProject() {
                       {/* Remark Text */}
                       <p
                         className="
-                font-[Poppins]
-                font-medium
-                text-[14px]
-                text-[#161616]
-              "
+                        font-[Poppins]
+                        font-medium
+                        text-[14px]
+                        text-[#161616]
+                      "
                       >
                         {item?.remark}
                       </p>

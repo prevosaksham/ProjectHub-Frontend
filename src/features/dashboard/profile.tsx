@@ -62,7 +62,7 @@ function Profile() {
         </h1>
         <div className="flex flex-col gap-3 sm:flex-row">
           <button type="button" onClick={() => navigate("/profile/edit")}
-            className="inline-flex h-11.25 w-full items-center justify-center gap-2 rounded-lg bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)] px-5 font-[Poppins] text-[14px] font-medium text-white transition hover:opacity-90 sm:w-auto"
+            className="inline-flex h-11.25 w-full items-center justify-center gap-2 rounded-lg bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)] px-5 font-[Poppins] text-[14px] font-medium text-white transition hover:opacity-90 sm:w-auto cursor-pointer"
           >
             <FiEdit2 />
             Edit
@@ -71,7 +71,7 @@ function Profile() {
           <button
             type="button"
             onClick={() => navigate("/change-password")}
-            className="inline-flex h-11.25 w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-5 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:w-auto"
+            className="inline-flex h-11.25 w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-5 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:w-auto cursor-pointer"
           >
             <FiLock />
             Change Password

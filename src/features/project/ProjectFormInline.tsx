@@ -240,8 +240,7 @@ export default function ProjectFormInline({
       assignedTo: [],
       devUrl: "",
       uatUrl: "",
-      prodUrl: "",
-      role: "",
+      prodUrl: ""
     } as any,
   });
 
@@ -285,7 +284,6 @@ export default function ProjectFormInline({
         status: project.status,
         priority: project.priority,
         clientName: project.clientName || "",
-        role: (project as any).role ?? "",
         startDate: project.startDate?.slice(0, 10) || "",
         endDate: project.endDate?.slice(0, 10) || "",
         devUrl: project.devUrl || "",
@@ -558,6 +556,7 @@ export default function ProjectFormInline({
                           <Select<{ value: string; label: string }, true>
                             {...field}
                             isMulti
+                            hideSelectedOptions={true}
                             isDisabled={isViewOnly}
                             closeMenuOnSelect={false}
                             options={selectOptions}
@@ -626,6 +625,7 @@ export default function ProjectFormInline({
                       <Select<{ value: ProjectStatus; label: string }, false>
                         {...field}
                         isDisabled={isViewOnly}
+                        hideSelectedOptions={true}
                         options={statuses.map((s) => ({
                           value: s.value,
                           label: s.label,
@@ -636,25 +636,81 @@ export default function ProjectFormInline({
                             .find((opt) => opt.value === field.value) ?? null
                         }
                         onChange={(opt) => field.onChange(opt ? opt.value : "")}
+                        classNamePrefix="project-select"
+                        menuPortalTarget={document.body}
+                        menuPosition="fixed"
+                        menuPlacement="auto"
                         styles={{
-                          control: (base) => ({
+                          control: (base, state) => ({
                             ...base,
-                            width: "100%",
-                            borderRadius: "0.75rem",
+                            minHeight: "46px",
+                            borderRadius: "8px",
                             borderColor: (errors as any).status
-                              ? "#ef4444"
-                              : "#cbd5e1",
-                            minHeight: "3rem",
+                              ? "#dc2626"
+                              : state.isFocused
+                                ? "#2563EB"
+                                : "#D1D5DB",
                             boxShadow: "none",
                             "&:hover": {
                               borderColor: (errors as any).status
-                                ? "#ef4444"
-                                : "#cbd5e1",
+                                ? "#dc2626"
+                                : "#2563EB",
                             },
                           }),
+
+                          valueContainer: (base) => ({
+                            ...base,
+                            padding: "0 12px",
+                          }),
+
+                          placeholder: (base) => ({
+                            ...base,
+                            color: "#6B7280",
+                          }),
+
+                          indicatorSeparator: () => ({
+                            display: "none",
+                          }),
+
+                          dropdownIndicator: (base) => ({
+                            ...base,
+                            color: "#6B7280",
+                          }),
+
+                          menuPortal: (base) => ({
+                            ...base,
+                            zIndex: 99999,
+                          }),
+
                           menu: (base) => ({
                             ...base,
-                            borderRadius: "0.75rem",
+                            borderRadius: "10px",
+                            overflow: "hidden",
+                            marginTop: "4px",
+                            paddingRight: "2px",
+                            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                          }),
+
+                          menuList: (base) => ({
+                            ...base,
+                            maxHeight: "180px",
+                            padding: 0,
+                            overflowY: "auto",
+                            scrollbarWidth: "thin",
+                            scrollbarColor: "#9CA3AF #F3F4F6",
+                          }),
+
+                          option: (base, state) => ({
+                            ...base,
+                            padding: "14px 16px",
+                            fontSize: "15px",
+                            cursor: "pointer",
+                            backgroundColor: state.isFocused
+                              ? "#DCEAFE"
+                              : state.isSelected
+                                ? "#DCEAFE"
+                                : "#FFFFFF",
+                            color: "#222222",
                           }),
                         }}
                         placeholder="Select status"
@@ -677,6 +733,7 @@ export default function ProjectFormInline({
                       <Select<{ value: ProjectPriority; label: string }, false>
                         {...field}
                         isDisabled={isViewOnly}
+                        hideSelectedOptions={true}
                         options={priorities.map((p) => ({
                           value: p.value,
                           label: p.label,
@@ -687,25 +744,81 @@ export default function ProjectFormInline({
                             .find((opt) => opt.value === field.value) ?? null
                         }
                         onChange={(opt) => field.onChange(opt ? opt.value : "")}
+                        classNamePrefix="project-select"
+                        menuPortalTarget={document.body}
+                        menuPosition="fixed"
+                        menuPlacement="auto"
                         styles={{
-                          control: (base) => ({
+                          control: (base, state) => ({
                             ...base,
-                            width: "100%",
-                            borderRadius: "0.75rem",
+                            minHeight: "46px",
+                            borderRadius: "8px",
                             borderColor: (errors as any).priority
-                              ? "#ef4444"
-                              : "#cbd5e1",
-                            minHeight: "3rem",
+                              ? "#dc2626"
+                              : state.isFocused
+                                ? "#2563EB"
+                                : "#D1D5DB",
                             boxShadow: "none",
                             "&:hover": {
                               borderColor: (errors as any).priority
-                                ? "#ef4444"
-                                : "#cbd5e1",
+                                ? "#dc2626"
+                                : "#2563EB",
                             },
                           }),
+
+                          valueContainer: (base) => ({
+                            ...base,
+                            padding: "0 12px",
+                          }),
+
+                          placeholder: (base) => ({
+                            ...base,
+                            color: "#6B7280",
+                          }),
+
+                          indicatorSeparator: () => ({
+                            display: "none",
+                          }),
+
+                          dropdownIndicator: (base) => ({
+                            ...base,
+                            color: "#6B7280",
+                          }),
+
+                          menuPortal: (base) => ({
+                            ...base,
+                            zIndex: 99999,
+                          }),
+
                           menu: (base) => ({
                             ...base,
-                            borderRadius: "0.75rem",
+                            borderRadius: "10px",
+                            overflow: "hidden",
+                            marginTop: "4px",
+                            paddingRight: "2px",
+                            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                          }),
+
+                          menuList: (base) => ({
+                            ...base,
+                            maxHeight: "180px",
+                            padding: 0,
+                            overflowY: "auto",
+                            scrollbarWidth: "thin",
+                            scrollbarColor: "#9CA3AF #F3F4F6",
+                          }),
+
+                          option: (base, state) => ({
+                            ...base,
+                            padding: "14px 16px",
+                            fontSize: "15px",
+                            cursor: "pointer",
+                            backgroundColor: state.isFocused
+                              ? "#DCEAFE"
+                              : state.isSelected
+                                ? "#DCEAFE"
+                                : "#FFFFFF",
+                            color: "#222222",
                           }),
                         }}
                         placeholder="Select priority"
@@ -917,7 +1030,7 @@ export default function ProjectFormInline({
                       <button
                         type="button"
                         onClick={() => removeDeveloper(d)}
-                        className="ml-1"
+                        className="ml-1 cursor-pointer"
                       >
                         <FiX size={14} />
                       </button>
