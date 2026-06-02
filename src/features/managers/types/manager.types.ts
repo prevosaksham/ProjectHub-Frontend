@@ -10,6 +10,7 @@ export interface Manager {
   empId: string;
   mobileNumber?: string;
   isEnabled?: boolean;
+  role: string;
   // createdAt?: string;
 }
 

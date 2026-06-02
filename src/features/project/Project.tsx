@@ -233,7 +233,7 @@ function Projects() {
                               href={p.devUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 rounded bg-[#EEF4FF] px-2 py-1 text-xs font-medium text-[#0059FF]"
+                              className="inline-flex items-center gap-1 rounded border border-[#A9C5FF] bg-[#DCE8FF] px-2 py-1 text-xs font-semibold text-[#0047CC]"
                             >
                               DEV <FiExternalLink size={10} />
                             </a>
@@ -243,7 +243,7 @@ function Projects() {
                               href={p.uatUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 rounded bg-[#FFF4E5] px-2 py-1 text-xs font-medium text-[#B76E00]"
+                              className="inline-flex items-center gap-1 rounded border border-[#FFC978] bg-[#FFE8C2] px-2 py-1 text-xs font-semibold text-[#A65A00]"
                             >
                               UAT <FiExternalLink size={10} />
                             </a>
@@ -253,7 +253,7 @@ function Projects() {
                               href={p.prodUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 rounded bg-[#E8F5E9] px-2 py-1 text-xs font-medium text-[#2E7D32]"
+                              className="inline-flex items-center gap-1 rounded border border-[#9DD8A2] bg-[#D4F0D6] px-2 py-1 text-xs font-semibold text-[#1F6B24]"
                             >
                               PROD <FiExternalLink size={10} />
                             </a>
