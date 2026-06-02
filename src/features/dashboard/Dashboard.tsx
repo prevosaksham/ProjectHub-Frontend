@@ -6,9 +6,32 @@ import activeIcon from "../../assets/Active.png";
 import completedIcon from "../../assets/Completed.png";
 import { useEffect, useState } from "react";
 import { getDashboardApi } from "../dashboard/api/DashboardApi";
-import Highcharts from "highcharts";
-import { HighchartsReact } from "highcharts-react-official";
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+  type ChartData,
+  type ChartOptions,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
 import Loader from "../../components/common/Loader";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+const getNiceTickInterval = (maxValue: number) => {
+  if (maxValue <= 10) return 1;
+  const roughInterval = maxValue / 5;
+  const magnitude = 10 ** Math.floor(Math.log10(roughInterval));
+  const normalized = roughInterval / magnitude;
+  if (normalized <= 1) return magnitude;
+  if (normalized <= 2) return 2 * magnitude;
+  if (normalized <= 5) return 5 * magnitude;
+  return 10 * magnitude;
+};
 
 interface KpiTile {
   label: string;
@@ -31,9 +54,58 @@ interface DashboardData {
   graphData: GraphItem[];
 }
 
+// Fallback data using your numbers as Active, and Completed = 60% of Active
+const getFallbackGraphData = (): GraphItem[] => {
+  const months = ["January", "February", "March", "April", "May", "June", "July"];
+  const activeValues = [65, 59, 80, 82, 56, 55, 40];
+  return months.map((month, idx) => ({
+    month,
+    active: activeValues[idx],
+    completed: Math.floor(activeValues[idx] * 0.6),
+  }));
+};
+
 function Dashboard() {
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      setLoading(true);
+      try {
+        const data = await getDashboardApi();
+        let finalGraphData: GraphItem[] = [];
+
+        if (data?.graphData && data.graphData.length > 0) {
+          finalGraphData = data.graphData.map((item: any) => ({
+            month: item.month,
+            active: typeof item.active === "number" ? item.active : 0,
+            completed: typeof item.completed === "number" ? item.completed : 0,
+          }));
+        } else {
+          finalGraphData = getFallbackGraphData();
+        }
+
+        setDashboard({
+          totalProjects: data?.totalProjects ?? 0,
+          activeProjects: data?.activeProjects ?? 0,
+          completedProjects: data?.completedProjects ?? 0,
+          graphData: finalGraphData,
+        });
+      } catch (error) {
+        console.error("Dashboard API Error", error);
+        setDashboard({
+          totalProjects: 0,
+          activeProjects: 0,
+          completedProjects: 0,
+          graphData: getFallbackGraphData(),
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboard();
+  }, []);
 
   const stats: KpiTile[] = [
     {
@@ -59,166 +131,164 @@ function Dashboard() {
     },
   ];
 
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const data = await getDashboardApi();
-        setDashboard(data);
-      } catch (error) {
-        console.error("Dashboard API Error", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDashboard();
-  }, []);
+  if (loading) return <Loader />;
 
-  if (loading) {
-    return <Loader />;
-  }
+  const graphData = dashboard?.graphData ?? getFallbackGraphData();
+  const highestGraphValue = Math.max(
+    ...graphData.flatMap((item) => [item.active, item.completed]),
+    0
+  );
+  const yAxisStepSize = getNiceTickInterval(highestGraphValue);
+  const yAxisMax =
+    highestGraphValue === 0
+      ? 5
+      : Math.ceil(highestGraphValue / yAxisStepSize) * yAxisStepSize;
+  const monthLabelMap: Record<string, string> = {
+    Jan: "January",
+    Feb: "February",
+    Mar: "March",
+    Apr: "April",
+    May: "May",
+    Jun: "June",
+    Jul: "July",
+    Aug: "August",
+    Sep: "September",
+    Oct: "October",
+    Nov: "November",
+    Dec: "December",
+  };
 
-  const graphData = dashboard?.graphData ?? [];
-  const maxValue = Math.max(
-  ...graphData.flatMap((item) => [item.active, item.completed]),
-  0
-);
-
-const dynamicMax = maxValue === 0 ? 10 : Math.ceil((maxValue + 2) / 5) * 5;
-
-const dynamicTickInterval = Math.max(
-  1,
-  Math.ceil(dynamicMax / 5)
-);
-  const chartOptions = {
-    chart: {
-      type: "spline",
-      backgroundColor: "transparent",
-      height: 300,
-      spacing: [4, 0, 4, 0],
-    },
-    title: {
-      text: "",
-    },
-    xAxis: {
-      categories: graphData.map((item) => item.month),
-      lineColor: "#D9D9D9",
-      tickLength: 0,
-      gridLineWidth: 1,
-      gridLineDashStyle: "Dot",
-      gridLineColor: "#E3E3E3",
-      labels: {
-        y: 18,
-        style: {
-          color: "#7A7A7A",
-          fontSize: "12px",
-          fontFamily: "Poppins",
-        },
-      },
-    },
-    yAxis: {
-       min: 0,
-      max: dynamicMax,
-      tickInterval: dynamicTickInterval,
-      lineWidth: 1,
-      lineColor: "#D9D9D9",
-      gridLineWidth: 1,
-      gridLineDashStyle: "Dot",
-      gridLineColor: "#DCDCDC",
-      title: {
-        text: "Projects",
-        margin: 8,
-        style: {
-          color: "#1E1E1E",
-          fontSize: "12px",
-          fontFamily: "Poppins",
-        },
-      },
-      labels: {
-        x: -4,
-        style: {
-          color: "#7A7A7A",
-          fontSize: "12px",
-          fontFamily: "Poppins",
-        },
-      },
-    },
-    tooltip: {
-      shared: true,
-      backgroundColor: "#FFFFFF",
-      borderColor: "#E5E7EB",
-      borderRadius: 8,
-      style: {
-        color: "#1E1E1E",
-        fontSize: "12px",
-        fontFamily: "Poppins",
-      },
-    },
-    legend: {
-      align: "center",
-      verticalAlign: "bottom",
-      layout: "horizontal",
-      symbolHeight: 6,
-      symbolWidth: 14,
-      symbolRadius: 6,
-      itemDistance: 22,
-      margin: 4,
-      itemStyle: {
-        color: "#5E5E5E",
-        fontSize: "12px",
-        fontWeight: "400",
-        fontFamily: "Poppins",
-      },
-    },
-    credits: {
-      enabled: false,
-    },
-    plotOptions: {
-      spline: {
-        lineWidth: 1,
-        marker: {
-          enabled: true,
-          radius: 3,
-          lineWidth: 1,
-          fillColor: "#FFFFFF",
-        },
-        states: {
-          hover: {
-            lineWidthPlus: 0,
-          },
-        },
-      },
-    },
-    series: [
+  // Two datasets – grouped bars (Active & Completed per month)
+  const chartData: ChartData<"bar"> = {
+    labels: graphData.map((item) => monthLabelMap[item.month] ?? item.month),
+    datasets: [
       {
-        name: "Active",
-        type: "spline",
-        data: graphData.map((item) => item.active),
-        color: "#252D9E",
-        marker: {
-          lineColor: "#252D9E",
-        },
-      },
-      {
-        name: "Completed",
-        type: "spline",
+        label: "Completed",
         data: graphData.map((item) => item.completed),
-        color: "#208A17",
-        marker: {
-          lineColor: "#208A17",
-        },
+        backgroundColor: "rgba(32, 138, 23, 0.16)",
+        borderColor: "#208A17",
+        borderWidth: 2,
+        borderRadius: 0,
+        borderSkipped: false,
+        barPercentage: 0.95,
+        categoryPercentage: 0.82,
+        maxBarThickness: 68,
+      },
+      {
+        label: "Active",
+        data: graphData.map((item) => item.active),
+        backgroundColor: "rgba(37, 45, 158, 0.16)",
+        borderColor: "#252D9E",
+        borderWidth: 2,
+        borderRadius: 0,
+        borderSkipped: false,
+        barPercentage: 0.95,
+        categoryPercentage: 0.82,
+        maxBarThickness: 68,
       },
     ],
   };
 
+  // Styling exactly like the image – rounded bars, Poppins font, light grid, etc.
+  const chartOptions: ChartOptions<"bar"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        display: true,
+        text: "Projects Insights",
+        color: "#222222",
+        padding: { top: 2, bottom: 12 },
+        font: { family: "Poppins", size: 15, weight: 600 },
+      },
+      legend: {
+        display: true,
+        position: "top",
+        align: "center",
+        labels: {
+          color: "#666666",
+          boxHeight: 14,
+          boxWidth: 42,
+          useBorderRadius: false,
+          padding: 18,
+          font: { family: "Poppins", size: 14, weight: 400 },
+        },
+      },
+      tooltip: {
+        enabled: true,
+        backgroundColor: "#FFFFFF",
+        borderColor: "#E5E7EB",
+        borderWidth: 1,
+        titleColor: "#1E1E1E",
+        bodyColor: "#1E1E1E",
+        titleFont: { family: "Poppins", size: 12, weight: "bold" },
+        bodyFont: { family: "Poppins", size: 12 },
+        caretSize: 6,
+        cornerRadius: 6,
+        displayColors: true,
+        padding: 12,
+      },
+    },
+    layout: {
+      padding: { top: 2, right: 8, bottom: 2, left: 0 },
+    },
+    scales: {
+      x: {
+        stacked: false,        // ← groups bars side‑by‑side
+        border: { color: "#D6D6D6" },
+        grid: {
+          display: false,
+          color: "rgba(0, 0, 0, 0.1)",
+          drawTicks: false,
+        },
+        ticks: {
+          color: "#666666",
+          padding: 10,
+          font: { family: "Poppins", size: 14, weight: 400 },
+        },
+      },
+      y: {
+        stacked: false,
+        beginAtZero: true,
+        max: yAxisMax,
+        border: { display: true, color: "#D6D6D6" },
+        grid: {
+          display: true,
+          color: "rgba(110, 104, 104, 0.1)",
+          drawTicks: false,
+        },
+        ticks: {
+          stepSize: yAxisStepSize,
+          precision: 0,
+          color: "#666666",
+          padding: 10,
+          font: { family: "Poppins", size: 14, weight: 400 },
+        },  
+      },
+    },
+    interaction: {
+      intersect: false,
+      mode: "index",
+    },
+    datasets: {
+      bar: {
+        hoverBackgroundColor: (context) =>
+          context.dataset.label === "Completed"
+            ? "rgba(32, 138, 23, 0.24)"
+            : "rgba(37, 45, 158, 0.24)",
+        hoverBorderWidth: 2,
+      },
+    },
+  };
+
   return (
     <div className="p-4 sm:p-6">
-
       {/* Welcome Section */}
       <h2 className="text-lg sm:text-xl font-semibold text-[#00076F] font-[Poppins]">
         Dashboard
       </h2>
 
-      {/* KPI Section */}
+      {/* KPI Section – unchanged */}
       <div className="mt-3 grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 md:grid-cols-2 xl:grid-cols-3">
         {stats.map((stat) => (
           <div
@@ -253,24 +323,15 @@ const dynamicTickInterval = Math.max(
         ))}
       </div>
 
-      {/* GRAPH SECTION */}
-      <div className="mt-5 rounded-none bg-white border border-[#ECECEC] px-4 py-4">
-        <h3 className="text-[18px] font-semibold text-[#1E1E1E] font-[Poppins] mb-3">
-          Projects Insights
-        </h3>
-
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={chartOptions}
-        />
+      {/* GRAPH SECTION – Grouped bar chart (two bars per month) with image styling */}
+      <div className="mt-5 overflow-hidden rounded-lg border border-[#E5E7EB] bg-white px-3 py-5 shadow-[0_12px_32px_rgba(15,23,42,0.06)] sm:px-5">
+        <div className="w-full overflow-x-auto">
+          <div className="h-[430px] min-w-[980px] bg-white px-2 py-2">
+            <Bar data={chartData} options={chartOptions} />
+          </div>
+        </div>
       </div>
-
-</div>
-       
-
-      
-
-    
+    </div>
   );
 }
 
