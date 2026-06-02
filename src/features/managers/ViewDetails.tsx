@@ -23,7 +23,7 @@ import SkeletonLoader from "../../components/common/SkeletonLoader";
 
 interface Manager {
   name?: string;
-  designation?: string;
+  role?: string;
   email?: string;
   empId?: string;
   mobileNumber?: string;
@@ -123,7 +123,7 @@ function ViewDetails() {
                     {manager?.name || "—"}
                   </h3>
                   <p className="text-sm text-blue-100">
-                    {manager?.designation || "—"}
+                    {manager?.role || "—"}
                   </p>
                 </div>
               </div>
