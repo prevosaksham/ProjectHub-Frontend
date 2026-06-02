@@ -19,7 +19,7 @@ import { listProjectsForUser } from "../project/api/projectApi";
 import StatusBadge from "../project/StatusBadge";
 import PriorityBadge from "../project/PriorityBadge";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import Loader from "../../components/common/Loader";
+import SkeletonLoader from "../../components/common/SkeletonLoader";
 
 interface Manager {
   name?: string;
@@ -104,7 +104,7 @@ function ViewDetails() {
       </div>
       {/* Loading / Error */}
       {loading ? (
-        <Loader />
+        <SkeletonLoader type="card" count={4} />
       ) : error ? (
         <div className="p-10 text-center text-red-600">{error}</div>
       ) : (

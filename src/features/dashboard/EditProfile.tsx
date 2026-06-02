@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { FiArrowLeft, FiSave } from "react-icons/fi";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import Loader from "../../components/common/Loader";
+import SkeletonLoader from "../../components/common/SkeletonLoader";
 import { showErrorToast, showSuccessToast } from "../../utils/toast";
 import { getProfile, readStoredUser, updateProfile } from "./api/profileApi";
 import type { ProfileUser } from "./api/profileApi";
@@ -13,7 +13,6 @@ type EditProfileFormValues = {
   name: string;
   email: string;
   empId: string;
-  designation: string;
   role: string;
   mobileNumber: string;
 };
@@ -22,7 +21,7 @@ const roleOptions = [
   { value: "", label: "Select Role" },
   { value: "MANAGER", label: "Manager" },
   { value: "LEADERSHIP", label: "Leadership" },
-  { value: "ADMIN", label: "Admin" },
+  { value: "SUPER_ADMIN", label: "SUPER_ADMIN" },
 ];
 
 const normalizeProfile = (
@@ -31,7 +30,6 @@ const normalizeProfile = (
   name: user?.name ?? "",
   email: user?.email ?? "",
   empId: user?.empId ?? "",
-  designation: user?.designation ?? "",
   role: user?.role ?? "",
   mobileNumber: user?.mobileNumber ?? "",
 });
@@ -85,11 +83,11 @@ function EditProfile() {
     };
   }, [reset]);
 
+
   const onSubmit = async (data: EditProfileFormValues) => {
     try {
       await updateProfile({
         name: data.name,
-        designation: data.designation,
         mobileNumber: data.mobileNumber,
       });
 
@@ -128,7 +126,7 @@ function EditProfile() {
         </button>
       </div>
       {loadingProfile ? (
-        <Loader />
+        <SkeletonLoader type="profile-form" count={3} />
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
           <div className="w-full space-y-4 rounded-2xl bg-white p-4 shadow-[0px_4px_16px_0px_#00000014] sm:p-5 lg:p-6">
@@ -171,17 +169,6 @@ function EditProfile() {
                   disabled
                   className={inputClass}
                   placeholder="Employee ID"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block font-[Poppins] text-[14px] font-medium leading-[100%] text-[#444444]">
-                  Designation
-                </label>
-                <input
-                  {...register("designation")}
-                  className={inputClass}
-                  placeholder="Designation"
                 />
               </div>
 

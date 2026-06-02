@@ -8,7 +8,6 @@ export interface Manager {
   name: string;
   email: string;
   empId: string;
-  designation: string;
   mobileNumber?: string;
   isEnabled?: boolean;
   // createdAt?: string;
@@ -18,7 +17,6 @@ export interface CreateManagerPayload {
   name: string;
   email: string;
   empId: string;
-  designation: string;
   role?: "" | "Manager" | "Leadership";
   mobileNumber?: string;
   password?: string;

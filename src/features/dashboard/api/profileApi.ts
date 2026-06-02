@@ -13,7 +13,6 @@ export type ProfileUser = {
 
 export type UpdateProfilePayload = {
   name: string;
-  designation: string;
   mobileNumber: string;
 };
 

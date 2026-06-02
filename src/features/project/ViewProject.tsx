@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { FiArrowLeft, FiX } from "react-icons/fi";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import Loader from "../../components/common/Loader";
+import SkeletonLoader from "../../components/common/SkeletonLoader";
 import { createProjectRemark, getProjectById } from "./api/projectApi";
 import type { Project, Remark } from "./types/project.types";
 import { extractDateTime } from "../../utils/contants";
@@ -172,7 +172,7 @@ function ViewProject() {
     }
   })();
   const userRole = String(currentUser?.role || "").toUpperCase();
-  const isAdmin = userRole === "ADMIN";
+  const isSUPER_ADMIN = userRole === "SUPER_ADMIN";
 
   const projectData = [
     {
@@ -185,7 +185,7 @@ function ViewProject() {
       label: "DESCRIPTION",
       value: project?.description || "-",
     },
-    ...(isAdmin
+    ...(isSUPER_ADMIN || userRole === "ADMIN"
       ? [
         {
           icon: <Users size={20} className="text-blue-600" />,
@@ -322,7 +322,7 @@ function ViewProject() {
       </div>
 
       {loading ? (
-        <Loader />
+        <SkeletonLoader type="project-details" />
       ) : (
         <>
           <div className="w-full p-4 sm:p-5 lg:p-6 bg-white rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
@@ -482,13 +482,13 @@ function ViewProject() {
               </h1>
 
               {/* Input Section */}
-              {userRole !== "ADMIN" && (
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-start mb-5">
-                  <textarea
-                    placeholder="Enter Here..."
-                    value={remark}
-                    onChange={(e) => setRemark(e.target.value)}
-                    className="
+
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-start mb-5">
+                <textarea
+                  placeholder="Enter Here..."
+                  value={remark}
+                  onChange={(e) => setRemark(e.target.value)}
+                  className="
               w-full
               border border-gray-300
               rounded-xl
@@ -499,10 +499,10 @@ function ViewProject() {
               h-16 sm:h-15
               focus:ring-2 focus:ring-blue-500
             "
-                  />
+                />
 
-                  <button
-                    className="
+                <button
+                  className="
               bg-blue-600
               hover:bg-blue-700
               text-white
@@ -515,13 +515,12 @@ function ViewProject() {
               self-stretch sm:self-auto
               h-16 sm:h-15 cursor-pointer
             "
-                    disabled={remark.trim() === "" || remarkLoading}
-                    onClick={() => handleRemarkSave(remark)}
-                  >
-                    {remarkLoading ? "Saving..." : "Save"}
-                  </button>
-                </div>
-              )}
+                  disabled={remark.trim() === "" || remarkLoading}
+                  onClick={() => handleRemarkSave(remark)}
+                >
+                  {remarkLoading ? "Saving..." : "Save"}
+                </button>
+              </div>
 
               {/* Remarks List */}
               <div className="max-h-80 overflow-y-auto space-y-4 pr-1">
