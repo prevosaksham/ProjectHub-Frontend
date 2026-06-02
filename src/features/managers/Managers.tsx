@@ -166,6 +166,10 @@ function Managers() {
                   </th>
 
                   <th className="pl-3 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none">
+                    Role
+                  </th>
+
+                  <th className="pl-3 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none">
                     Mobile Number
                   </th>
 
@@ -195,6 +199,10 @@ function Managers() {
 
                     <td className="pl-3 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none border-y border-[#F5F5F5] truncate max-w-0">
                       {manager.empId}
+                    </td>
+
+                    <td className="pl-3 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none border-y border-[#F5F5F5] truncate max-w-0">
+                      {manager.role}
                     </td>
 
                     <td className="pl-3 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none border-y border-[#F5F5F5] truncate max-w-0">

@@ -183,7 +183,7 @@ function ProjectFormModal({
                     <div className="space-y-6 p-5">
                         {/* Project Name */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-[#444]">
+                            <label className="mb-2 block text-sm font-medium text-[14px] font-[Poppins] text-[#444444]">
                                 Project Name <span className="text-red-500">*</span>
                             </label>
 
@@ -207,7 +207,7 @@ function ProjectFormModal({
 
                         {/* Assigned To */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-[#444]">
+                            <label className="mb-2 block text-sm text-[14px] font-[Poppins] font-medium text-[#444444]">
                                 Assigned To
                             </label>
 
