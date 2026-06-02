@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiEdit2, FiLock } from "react-icons/fi";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import Loader from "../../components/common/Loader";
+import SkeletonLoader from "../../components/common/SkeletonLoader";
 import { showErrorToast } from "../../utils/toast";
 import { getProfile, readStoredUser } from "./api/profileApi";
 import type { ProfileUser } from "./api/profileApi";
@@ -48,7 +48,6 @@ function Profile() {
     { label: "Full Name", value: profile?.name },
     { label: "Email", value: profile?.email },
     { label: "Employee ID", value: profile?.empId },
-    { label: "Designation", value: profile?.designation },
     { label: "Role", value: profile?.role },
     { label: "Mobile Number", value: profile?.mobileNumber },
   ];
@@ -80,7 +79,7 @@ function Profile() {
         </div>
       </div>
       {loadingProfile ? (
-        <Loader />
+        <SkeletonLoader type="profile-form" count={3} />
       ) : (
         <div className="mt-4 w-full space-y-4 rounded-2xl bg-white p-4 shadow-[0px_4px_16px_0px_#00000014] sm:p-5 lg:p-6">
           <h2 className="mb-2 font-[Poppins] text-[16px] font-semibold leading-[100%] text-[#161616]">

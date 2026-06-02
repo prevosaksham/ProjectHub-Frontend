@@ -13,10 +13,11 @@ import {
 import plusIcon from "../../assets/plus icon.png";
 
 import StatusBadge from "./StatusBadge";
+import ProjectFormModal from "./ProjectFormModal";
 import type { Project } from "./types/project.types";
 import { listProjects, toggleProject } from "./api/projectApi";
 import { showErrorToast, showSuccessToast } from "../../utils/toast";
-import Loader from "../../components/common/Loader";
+import SkeletonLoader from "../../components/common/SkeletonLoader";
 import Pagination from "../../components/common/Pagination";
 import EmptyState from "../../components/Emptyset";
 
@@ -39,6 +40,8 @@ function Projects() {
     }
   })();
   const userRole = String(currentUser?.role || "").toUpperCase();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   // const user = JSON.parse(
   //   localStorage.getItem("user") || "{}"
@@ -139,9 +142,12 @@ function Projects() {
             />
           </div>
 
-          {userRole !== "MANAGER" && (
+          {(userRole === "SUPER_ADMIN" || userRole === "ADMIN") && (
             <button
-              onClick={() => navigate("/projects/add-edit")}
+              onClick={() => {
+                setSelectedProject(null);
+                setModalOpen(true);
+              }}
               className="inline-flex h-10 sm:h-11.25 items-center gap-2 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm font-medium text-white whitespace-nowrap cursor-pointer"
               style={{
                 background: "linear-gradient(90deg, #0059FF 0%, #003699 100%)",
@@ -157,7 +163,7 @@ function Projects() {
 
       {/* Table */}
       {loading ? (
-        <Loader />
+        <SkeletonLoader type="table" count={5} />
       ) : (
         <div className="overflow-x-auto">
           {items.length === 0 ? (
@@ -267,20 +273,25 @@ function Projects() {
                             <FiEye size={16} />
                           </button>
                           <button
-                            onClick={() =>
-                              navigate("/projects/add-edit", {
-                                state: { projectId: p.id },
-                              })
-                            }
+                            onClick={() => {
+                              if (userRole === "SUPER_ADMIN"|| userRole === "ADMIN") {
+                                setSelectedProject(p);
+                                setModalOpen(true);
+                              } else {
+                                navigate("/projects/add-edit", {
+                                  state: { projectId: p.id },
+                                });
+                              }
+                            }}
                             className="relative flex h-8 w-8 items-center justify-center rounded-lg gap-2 p-2 bg-[#EEF4FF] text-[#0059FF] hover:bg-[#dde9ff] cursor-pointer"
                           >
                             <FiEdit2 size={16} />
-                            {userRole !== "ADMIN" && !p.isSetupCompleted && (
+                            {(userRole !== "SUPER_ADMIN" && userRole !== "ADMIN") && !p.isSetupCompleted && (
                               <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-red-500"></span>
                             )}
                           </button>
 
-                          {userRole === "ADMIN" && (
+                          {(userRole === "SUPER_ADMIN" || userRole === "ADMIN") && (
                             <button
                               onClick={() => handleToggle(p)}
                               className={`flex h-8 w-8 items-center justify-center rounded-lg cursor-pointer ${
@@ -319,6 +330,12 @@ function Projects() {
           )}
         </div>
       )}
+      <ProjectFormModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        refresh={() => fetchProjects(1, search)}
+        project={selectedProject}
+      />
     </div>
   );
 }

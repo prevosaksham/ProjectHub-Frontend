@@ -1,17 +1,20 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import Select from "react-select";
 import { FiArrowLeft, FiEye, FiEyeOff } from "react-icons/fi";
 import { createManager } from "./api/managerApi";
 import type { CreateManagerPayload } from "./types/manager.types";
+import { getRoles } from "../../api/rolesApi";
 import { showErrorToast, showSuccessToast } from "../../utils/toast";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import { useState } from "react";
 
 function AddManager() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [roleOptions, setRoleOptions] = useState<{ value: string; label: string }[]>(
+    [],);
   const {
     register,
     control,
@@ -26,7 +29,6 @@ function AddManager() {
       name: "",
       email: "",
       empId: "",
-      designation: "",
       role: "",
       mobileNumber: "",
       password: "",
@@ -38,6 +40,34 @@ function AddManager() {
     `w-full min-w-0 rounded-xl border px-4 py-3 pr-12 outline-none ${hasError ? "border-red-500 focus:border-red-500" : "border-slate-300 focus:border-blue-500"}`;
 
   const password = watch("password");
+
+  useEffect(() => {
+    let active = true;
+
+    const loadRoles = async () => {
+      try {
+        const roles = await getRoles();
+        if (!active) {
+          return;
+        }
+
+        setRoleOptions(
+          roles.map((value) => ({
+            value,
+            label: value
+          })),
+        );
+      } catch (error) {
+        console.error("Failed to load role options", error);
+      }
+    };
+
+    loadRoles();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const preventCopyPaste = (
     e:
@@ -57,24 +87,23 @@ function AddManager() {
 
   const onSubmit = async (data: CreateManagerPayload) => {
     try {
-      await createManager({
+      const response = await createManager({
         name: data.name,
         email: data.email,
         empId: data.empId,
-        designation: data.designation,
         role: data.role,
         password: data.password,
         mobileNumber: data.mobileNumber,
       });
 
-      showSuccessToast("Manager created successfully.");
+      showSuccessToast(response?.message || "User created successfully");
       reset();
       navigate("/users");
     } catch (error: any) {
       console.error(error);
       showErrorToast(
         error?.response?.data?.message ||
-          "Failed to create manager. Please try again.",
+        "Failed to create manager. Please try again.",
       );
     }
   };
@@ -134,7 +163,7 @@ function AddManager() {
                   },
                 })}
                 className={getInputClassName(!!errors.name)}
-                placeholder="John Doe"
+                placeholder="Enter full name"
               />
               {errors.name && (
                 <p className="mt-1 text-sm text-red-500 text-[12px]">
@@ -158,7 +187,7 @@ function AddManager() {
                   },
                 })}
                 className={getInputClassName(!!errors.email)}
-                placeholder="manager@example.com"
+                placeholder="Enter email address"
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-500 text-[12px]">
@@ -182,41 +211,11 @@ function AddManager() {
                 })}
                 maxLength={8}
                 className={getInputClassName(!!errors.empId)}
-                placeholder="PIS1001"
+                placeholder="Enter employee ID"
               />
               {errors.empId && (
                 <p className="mt-1 text-sm text-red-500 text-[12px]">
                   {errors.empId.message}
-                </p>
-              )}
-            </div>
-
-            {/* Designation */}
-            <div>
-              <label className="mb-2 block font-[Poppins] text-[14px] font-medium leading-[100%] tracking-normal text-[#444444]">
-                Designation
-              </label>
-              <input
-                {...register("designation")}
-                className={getInputClassName(!!errors.designation)}
-                maxLength={50}
-                {...register("designation", {
-                  pattern: {
-                    value: /^[A-Za-z\s]+$/,
-                    message: "Designation should contain only letters",
-                  },
-
-                  maxLength: {
-                    value: 50,
-                    message: "Designation cannot exceed 50 characters",
-                  },
-                })}
-                placeholder="Project Manager"
-              />
-
-              {errors.designation && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.designation.message}
                 </p>
               )}
             </div>
@@ -229,23 +228,19 @@ function AddManager() {
               <Controller
                 name="role"
                 control={control}
-                defaultValue="Manager"
+                defaultValue=""
                 rules={{ required: "Role is required" }}
                 render={({ field }) => {
-                  const options = [
-                    { value: "", label: "Select Role" },
-                    { value: "ADMIN", label: "Admin" },
-                    { value: "MANAGER", label: "Manager" },
-                    { value: "LEADERSHIP", label: "Leadership" },
-                  ];
+                  const options = roleOptions;
 
                   return (
                     <Select
                       {...field}
+                      placeholder="Select Role"
                       value={
                         options.find(
-                          (option) => option.value === field.value,
-                        ) ?? options[0]
+                          (option) => option.value === field.value
+                        ) || null
                       }
                       onChange={(option) => field.onChange(option?.value)}
                       options={options}
@@ -283,7 +278,8 @@ function AddManager() {
                 Mobile Number <span className="text-red-500">*</span>
               </label>
               <input
-                type="tel"
+                type="text"
+                maxLength={10}
                 {...register("mobileNumber", {
                   required: "Mobile number is required",
                   pattern: {
@@ -291,8 +287,12 @@ function AddManager() {
                     message: "Enter a valid mobile number",
                   },
                 })}
+                onInput={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  target.value = target.value.replace(/\D/g, "").slice(0, 10);
+                }}
                 className={getInputClassName(!!errors.mobileNumber)}
-                placeholder="9876543210"
+                placeholder="Enter mobile number"
               />
               {errors.mobileNumber && (
                 <p className="mt-1 text-sm text-red-500 text-[12px]">
@@ -322,7 +322,7 @@ function AddManager() {
                   onPaste={preventCopyPaste}
                   onCut={preventCopyPaste}
                   onKeyDown={preventCopyPaste}
-                  className="w-full min-w-0 rounded-xl border border-slate-300 px-4 py-3 pr-12 outline-none focus:border-blue-500"
+                  className={getInputClassName(!!errors.password)}
                   placeholder="Enter password"
                 />
                 <button

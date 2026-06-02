@@ -40,6 +40,7 @@ export interface Project {
   status: ProjectStatus;
   priority: ProjectPriority;
   clientName: string | null;
+  role?: string | null;
   managerId?: string | null;
   // budget: string | null;
   startDate: string | null;
@@ -72,6 +73,7 @@ export interface CreateProjectPayload {
   status?: ProjectStatus;
   priority?: ProjectPriority;
   clientName?: string | null;
+  role?: string | null;
 
   startDate?: string | null;
   endDate?: string | null;

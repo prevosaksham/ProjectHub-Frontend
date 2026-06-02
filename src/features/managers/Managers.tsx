@@ -10,7 +10,9 @@ import {
 } from "react-icons/fi";
 import plusIcon from "../../assets/plus icon.png";
 import { listManagers, toggleManager } from "./api/managerApi";
-import type { Manager } from "./types/manager.types";import { showErrorToast, showSuccessToast } from "../../utils/toast";import Loader from "../../components/common/Loader";
+import type { Manager } from "./types/manager.types";
+import { showErrorToast, showSuccessToast } from "../../utils/toast";
+import SkeletonLoader from "../../components/common/SkeletonLoader";
 import Pagination from "../../components/common/Pagination";
 import EmptyState from "../../components/Emptyset";
 
@@ -20,16 +22,14 @@ function Managers() {
   const [limit] = useState<number>(5);
   const [total, setTotal] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState<string>("");
   const navigate = useNavigate();
 
   const fetchManagers = async (p = page, searchTerm = search) => {
     try {
       setLoading(true);
-
       const res = await listManagers(p, limit, searchTerm);
-
       console.log("Managers:", res.users, "search:", searchTerm);
 
       setItems(res.users);
@@ -74,8 +74,8 @@ function Managers() {
       console.error("Failed to toggle manager status:", error);
       showErrorToast(
         error?.response?.data?.message ||
-          error?.message ||
-          "Failed to update user status. Please try again.",
+        error?.message ||
+        "Failed to update user status. Please try again.",
       );
     }
   };
@@ -130,7 +130,7 @@ function Managers() {
       {/* Table */}
       <div className="overflow-x-auto">
         {loading ? (
-          <Loader />
+          <SkeletonLoader type="table" count={5} />
         ) : items.length === 0 ? (
           // <div className="flex flex-col items-center justify-center p-14 text-center">
           //   <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-600">
@@ -143,118 +143,111 @@ function Managers() {
             icon={<FiUsers size={30} />}
             title="No users found"
             description="There are no users available right now."
-          />  
+          />
         ) : (
-          <table className="min-w-200 w-full table-fixed border-separate border-spacing-y-2">
-            <thead>
-              <tr className="h-11.25 bg-[#EEF4FF]">
-                <th className="w-22.5 pl-7.5 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none rounded-l-lg">
-                  Sr. No.
-                </th>
+          <>
+            <table className="min-w-200 w-full table-fixed border-separate border-spacing-y-2">
+              <thead>
+                <tr className="h-11.25 bg-[#EEF4FF]">
+                  <th className="w-22.5 pl-7.5 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none rounded-l-lg">
+                    Sr. No.
+                  </th>
 
-                <th className="pl-3 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none">
-                  Name
-                </th>
+                  <th className="pl-3 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none">
+                    Name
+                  </th>
 
-                <th className="pl-3 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none">
-                  Email
-                </th>
+                  <th className="pl-3 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none">
+                    Email
+                  </th>
 
-                <th className="pl-3 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none">
-                  Employee ID
-                </th>
+                  <th className="pl-3 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none">
+                    Employee ID
+                  </th>
 
-                <th className="pl-3 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none">
-                  Designation
-                </th>
+                  <th className="pl-3 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none">
+                    Mobile Number
+                  </th>
 
-                <th className="pl-3 pr-4 py-2 text-left text-sm font-medium text-[#161616] font-[Poppins] leading-none">
-                  Mobile Number
-                </th>
-
-                <th className="pl-3 pr-7.5 py-2 text-center text-sm font-medium text-[#161616] font-[Poppins] leading-none rounded-r-lg">
-                  Action
-                </th>
-              </tr>
-            </thead>
-
-            <tbody className="bg-white">
-              {items.map((manager, index) => (
-                <tr
-                  key={manager.id}
-                  className="h-11.25 bg-white hover:bg-slate-50"
-                >
-                  <td className="w-20 pl-7.5 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none rounded-l-lg border-y border-l border-[#F5F5F5]">
-                    {(page - 1) * limit + index + 1}
-                  </td>
-
-                  <td className="pl-3 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none border-y border-[#F5F5F5] truncate max-w-0">
-                    {manager.name}
-                  </td>
-
-                  <td className="pl-3 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none border-y border-[#F5F5F5] truncate max-w-0">
-                    {manager.email}
-                  </td>
-
-                  <td className="pl-3 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none border-y border-[#F5F5F5] truncate max-w-0">
-                    {manager.empId}
-                  </td>
-
-                  <td className="pl-3 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none border-y border-[#F5F5F5] truncate max-w-0">
-                    {manager.designation}
-                  </td>
-
-                  <td className="pl-3 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none border-y border-[#F5F5F5] truncate max-w-0">
-                    {manager.mobileNumber}
-                  </td>
-
-                  <td className="pl-3 pr-7.5 py-2 text-center rounded-r-lg border-y border-r border-[#F5F5F5]">
-                    <div className="inline-flex items-center justify-center gap-2">
-                      <button
-                        onClick={() =>
-                          navigate(`/users/${manager.id}/projects`)
-                        }
-                        className="flex h-8 w-8 items-center justify-center rounded-lg gap-2 p-2 bg-[#EEF4FF] cursor-pointer text-[#0059FF] hover:bg-[#dde9ff]"
-                      >
-                        <FiEye size={16} />
-                      </button>
-
-                      <button
-                        onClick={() => handleToggle(manager)}
-                        className={`flex h-8 w-8 items-center justify-center rounded-lg cursor-pointer ${manager.isEnabled ? "bg-[#E8F5E9] text-[#2E7D32] hover:bg-[#d7efd7]" : "bg-[#F5F5F5] text-[#6B7280] hover:bg-[#e5e7eb]"}`}
-                        title={manager.isEnabled ? "Disable user" : "Enable user"}
-                      >
-                        {manager.isEnabled ? (
-                          <FiToggleRight size={18} />
-                        ) : (
-                          <FiToggleLeft size={18} />
-                        )}
-                      </button>
-                    </div>
-                  </td>
+                  <th className="pl-3 pr-7.5 py-2 text-center text-sm font-medium text-[#161616] font-[Poppins] leading-none rounded-r-lg">
+                    Action
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody className="bg-white">
+                {items.map((manager, index) => (
+                  <tr
+                    key={manager.id}
+                    className="h-11.25 bg-white hover:bg-slate-50"
+                  >
+                    <td className="w-20 pl-7.5 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none rounded-l-lg border-y border-l border-[#F5F5F5]">
+                      {(page - 1) * limit + index + 1}
+                    </td>
+
+                    <td className="pl-3 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none border-y border-[#F5F5F5] truncate max-w-0">
+                      {manager.name}
+                    </td>
+
+                    <td className="pl-3 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none border-y border-[#F5F5F5] truncate max-w-0">
+                      {manager.email}
+                    </td>
+
+                    <td className="pl-3 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none border-y border-[#F5F5F5] truncate max-w-0">
+                      {manager.empId}
+                    </td>
+
+                    <td className="pl-3 pr-4 py-2 text-sm font-normal text-[#444444] font-[Poppins] leading-none border-y border-[#F5F5F5] truncate max-w-0">
+                      {manager.mobileNumber}
+                    </td>
+
+                    <td className="pl-3 pr-7.5 py-2 text-center rounded-r-lg border-y border-r border-[#F5F5F5]">
+                      <div className="inline-flex items-center justify-center gap-2">
+                        <button
+                          onClick={() =>
+                            navigate(`/users/${manager.id}/projects`)
+                          }
+                          className="flex h-8 w-8 items-center justify-center rounded-lg gap-2 p-2 bg-[#EEF4FF] cursor-pointer text-[#0059FF] hover:bg-[#dde9ff]"
+                        >
+                          <FiEye size={16} />
+                        </button>
+
+                        <button
+                          onClick={() => handleToggle(manager)}
+                          className={`flex h-8 w-8 items-center justify-center rounded-lg cursor-pointer ${manager.isEnabled ? "bg-[#E8F5E9] text-[#2E7D32] hover:bg-[#d7efd7]" : "bg-[#F5F5F5] text-[#6B7280] hover:bg-[#e5e7eb]"}`}
+                          title={manager.isEnabled ? "Disable user" : "Enable user"}
+                        >
+                          {manager.isEnabled ? (
+                            <FiToggleRight size={18} />
+                          ) : (
+                            <FiToggleLeft size={18} />
+                          )}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              total={total}
+              onPrev={() => {
+                if (page > 1) {
+                  fetchManagers(page - 1, search);
+                }
+              }}
+              onNext={() => {
+                if (page < totalPages) {
+                  fetchManagers(page + 1, search);
+                }
+              }}
+              onPageChange={(pageNumber) => fetchManagers(pageNumber, search)}
+            />
+          </>
         )}
       </div>
-
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        total={total}
-        onPrev={() => {
-          if (page > 1) {
-            fetchManagers(page - 1, search);
-          }
-        }}
-        onNext={() => {
-          if (page < totalPages) {
-            fetchManagers(page + 1, search);
-          }
-        }}
-        onPageChange={(pageNumber) => fetchManagers(pageNumber, search)}
-      />
     </div>
   );
 }

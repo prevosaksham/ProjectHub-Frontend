@@ -23,7 +23,7 @@ import type {
   ProjectStatus,
 } from "./types/project.types";
 import { useNavigate } from "react-router-dom";
-import Loader from "../../components/common/Loader";
+import SkeletonLoader from "../../components/common/SkeletonLoader";
 
 interface Props {
   project?: Project | null;
@@ -83,7 +83,7 @@ export default function ProjectFormInline({
     }
   })();
   const userRole = String(currentUser?.role || "").toUpperCase();
-  const isAdmin = userRole === "ADMIN";
+  const isSUPER_ADMIN = userRole === "SUPER_ADMIN";
 
   const getDocumentUrl = (doc: ProjectDocument) => {
     const docBaseUrl = import.meta.env.VITE_DOC_VIEW_URL?.replace(/\/$/, "");
@@ -241,6 +241,7 @@ export default function ProjectFormInline({
       devUrl: "",
       uatUrl: "",
       prodUrl: "",
+      role: "",
     } as any,
   });
 
@@ -284,6 +285,7 @@ export default function ProjectFormInline({
         status: project.status,
         priority: project.priority,
         clientName: project.clientName || "",
+        role: (project as any).role ?? "",
         startDate: project.startDate?.slice(0, 10) || "",
         endDate: project.endDate?.slice(0, 10) || "",
         devUrl: project.devUrl || "",
@@ -389,8 +391,8 @@ export default function ProjectFormInline({
     setDeveloperError("");
     setDocumentError("");
 
-    if (isAdmin) {
-      // Admin: require Assigned To
+    if (isSUPER_ADMIN) {
+      // SUPER_ADMIN: require Assigned To
       if (assignedTo.length === 0) {
         const message = "Assigned To is required";
         setError("assignedTo" as any, { type: "required", message });
@@ -465,7 +467,7 @@ export default function ProjectFormInline({
         />
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 ">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
           <h1 className="mt-5 font-[Poppins] text-[20px] font-semibold leading-[100%] tracking-normal text-[#00076F]">
             {pageTitle}
           </h1>
@@ -480,7 +482,7 @@ export default function ProjectFormInline({
         </div>
       </div>
       {loading ? (
-        <Loader />
+        <SkeletonLoader type="project-details" />
       ) : (
         <>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-6">
@@ -510,17 +512,15 @@ export default function ProjectFormInline({
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Description&nbsp;
-                  {userRole != "ADMIN" && (
                     <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                       *
                     </span>
-                  )}
                 </label>
                 <textarea
                   rows={3}
                   {...register(
                     "description",
-                    isAdmin ? {} : { required: "Description is required" },
+                    isSUPER_ADMIN ? {} : { required: "Description is required" },
                   )}
                   disabled={isViewOnly}
                   className={getInputClassName(!!errors.description)}
@@ -530,7 +530,7 @@ export default function ProjectFormInline({
                     {errors.description.message}
                   </p>
                 )}
-                {userRole == "ADMIN" && (
+                {(userRole == "SUPER_ADMIN"||userRole == "ADMIN") && (
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       Assigned To&nbsp;
@@ -612,7 +612,7 @@ export default function ProjectFormInline({
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Status&nbsp;
-                    {userRole != "ADMIN" && (
+                    {userRole != "SUPER_ADMIN" && (
                       <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                         *
                       </span>
@@ -621,7 +621,7 @@ export default function ProjectFormInline({
                   <Controller
                     name={"status" as any}
                     control={control}
-                    rules={isAdmin ? {} : { required: "Status is required" }}
+                    rules={isSUPER_ADMIN ? {} : { required: "Status is required" }}
                     render={({ field }) => (
                       <Select<{ value: ProjectStatus; label: string }, false>
                         {...field}
@@ -721,7 +721,7 @@ export default function ProjectFormInline({
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Client Name&nbsp;
-                    {userRole != "ADMIN" && (
+                    {userRole != "SUPER_ADMIN" && (
                       <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                         *
                       </span>
@@ -730,7 +730,7 @@ export default function ProjectFormInline({
                   <input
                     {...register(
                       "clientName",
-                      isAdmin ? {} : { required: "Client name is required" },
+                      isSUPER_ADMIN ? {} : { required: "Client name is required" },
                     )}
                     disabled={isViewOnly}
                     className={getInputClassName(!!errors.clientName)}
@@ -766,7 +766,7 @@ export default function ProjectFormInline({
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     End Date&nbsp;
-                    {userRole != "ADMIN" && (
+                    {userRole != "SUPER_ADMIN" && (
                       <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                         *
                       </span>
@@ -776,7 +776,7 @@ export default function ProjectFormInline({
                     type="date"
                     {...register(
                       "endDate",
-                      isAdmin ? {} : { required: "End date is required" },
+                      isSUPER_ADMIN ? {} : { required: "End date is required" },
                     )}
                     disabled={isViewOnly}
                     className={getInputClassName(!!errors.endDate)}
@@ -793,11 +793,9 @@ export default function ProjectFormInline({
             <div className="card p-5 space-y-4 md:col-span-2 xl:col-span-3 bg-white  rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
               <label className="block font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-2">
                 Environment Links&nbsp;
-                {userRole != "ADMIN" && (
                   <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                     *
                   </span>
-                )}
               </label>
 
               <div className="space-y-4">
@@ -834,18 +832,18 @@ export default function ProjectFormInline({
                           <input
                             {...register(
                               env.name as keyof CreateProjectPayload,
-                              isAdmin
+                              isSUPER_ADMIN
                                 ? {
-                                    validate: (value) =>
-                                      !value ||
-                                      validateUrl(value) ||
-                                      "Invalid URL",
-                                  }
+                                  validate: (value) =>
+                                    !value ||
+                                    validateUrl(value) ||
+                                    "Invalid URL",
+                                }
                                 : {
-                                    required: `${env.label} URL is required`,
-                                    validate: (value) =>
-                                      validateUrl(value) || "Invalid URL",
-                                  },
+                                  required: `${env.label} URL is required`,
+                                  validate: (value) =>
+                                    validateUrl(value) || "Invalid URL",
+                                },
                             )}
                             disabled={isViewOnly}
                             className={`${getInputClassName(
@@ -880,11 +878,9 @@ export default function ProjectFormInline({
             <div className="card p-5 space-y-4 md:col-span-2 xl:col-span-3 bg-white  rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
               <label className="block font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-2">
                 Developers&nbsp;
-                {userRole != "ADMIN" && (
                   <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                     *
                   </span>
-                )}
               </label>
               <div className="flex gap-2">
                 <input
@@ -939,11 +935,9 @@ export default function ProjectFormInline({
             <div className="card p-5 space-y-4 md:col-span-2 xl:col-span-3 bg-white rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
               <label className="block font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-2">
                 Documents&nbsp;
-                {userRole != "ADMIN" && (
                   <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
                     *
                   </span>
-                )}
               </label>
 
               {/* 2 Column Layout */}
