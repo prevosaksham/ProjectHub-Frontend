@@ -23,7 +23,8 @@ function Header({ collapsed, onToggle, onMobileOpen }: HeaderProps) {
       return null;
     }
   })();
-  const userRole = String(currentUser?.name || "").toUpperCase();
+  const Username = currentUser.name;
+  const Role = String(currentUser?.role || "").toUpperCase();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -77,7 +78,7 @@ function Header({ collapsed, onToggle, onMobileOpen }: HeaderProps) {
           )}
         </button>
         <h2 className="hidden sm:block text-sm font-medium text-gray-800 font-[Poppins]">
-          Welcome, <span className="text-[#0059FF]">{userRole}</span>
+          Welcome, <span className="text-[#0059FF]">{Role}</span>
         </h2>
       </div>
 
@@ -91,9 +92,7 @@ function Header({ collapsed, onToggle, onMobileOpen }: HeaderProps) {
             <User size={20} className="text-gray-700 hidden sm:block" />
           </div>
 
-          <h2 className="hidden sm:inline text-sm font-medium text-gray-700">
-            {userRole}
-          </h2>
+          <h2 className="block max-w-25 truncate text-[#020202]">{Username}</h2>
 
           <ChevronDown size={16} className="text-gray-500" />
         </button>
