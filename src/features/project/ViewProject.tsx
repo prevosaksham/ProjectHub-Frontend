@@ -475,19 +475,20 @@ function ViewProject() {
               )}
             </div>
           </div>
-          <div className="w-full p-4 sm:p-5 lg:p-6 bg-white rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
-            <h1 className="font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-4">
-              Remarks
-            </h1>
+          {userRole !== "LEADERSHIP" && project?.createdBy && project?.createdBy?.role !== "LEADERSHIP" &&
+            (<div className="w-full p-4 sm:p-5 lg:p-6 bg-white rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
+              <h1 className="font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-4">
+                Remarks
+              </h1>
 
-            {/* Input Section */}
+              {/* Input Section */}
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-start mb-5">
-              <textarea
-                placeholder="Enter Here..."
-                value={remark}
-                onChange={(e) => setRemark(e.target.value)}
-                className="
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-start mb-5">
+                <textarea
+                  placeholder="Enter Here..."
+                  value={remark}
+                  onChange={(e) => setRemark(e.target.value)}
+                  className="
               w-full
               border border-gray-300
               rounded-xl
@@ -498,10 +499,10 @@ function ViewProject() {
               h-16 sm:h-15
               focus:ring-2 focus:ring-blue-500
             "
-              />
+                />
 
-              <button
-                className="
+                <button
+                  className="
               bg-blue-600
               hover:bg-blue-700
               text-white
@@ -514,26 +515,26 @@ function ViewProject() {
               self-stretch sm:self-auto
               h-16 sm:h-15 cursor-pointer
             "
-                disabled={remark.trim() === "" || remarkLoading}
-                onClick={() => handleRemarkSave(remark)}
-              >
-                {remarkLoading ? "Saving..." : "Save"}
-              </button>
-            </div>
+                  disabled={remark.trim() === "" || remarkLoading}
+                  onClick={() => handleRemarkSave(remark)}
+                >
+                  {remarkLoading ? "Saving..." : "Save"}
+                </button>
+              </div>
 
-            {/* Remarks List */}
-            <div className="max-h-80 overflow-y-auto space-y-4 pr-1">
-              {project?.remarks && project?.remarks?.length > 0 ? (
-                project?.remarks?.map((item: Remark) => (
-                  <div
-                    key={item?.createdAt}
-                    className="bg-[#F5F5F5] rounded-2xl p-4 sm:p-5"
-                  >
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="
+              {/* Remarks List */}
+              <div className="max-h-80 overflow-y-auto space-y-4 pr-1">
+                {project?.remarks?.length ? (
+                  project?.remarks?.map((item: Remark) => (
+                    <div
+                      key={item?.createdAt}
+                      className="bg-[#F5F5F5] rounded-2xl p-4 sm:p-5"
+                    >
+                      {/* Header */}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="
                     w-8
                     h-8
                     rounded-[20px]
@@ -542,48 +543,48 @@ function ViewProject() {
                     justify-center
                     bg-white
                   "
-                        >
-                          <User size={14} className="text-blue-500" />
-                        </div>
+                          >
+                            <User size={14} className="text-blue-500" />
+                          </div>
 
-                        <h3
-                          className="
+                          <h3
+                            className="
                     font-[Poppins]
                     font-medium
                     text-[14px]
                     text-[#7A7A7A]
                   "
-                        >
-                          {item?.addedBy?.name}
-                        </h3>
+                          >
+                            {item?.addedBy?.name}
+                          </h3>
+                        </div>
+
+                        <span className="text-xs sm:text-sm text-gray-500">
+                          {extractDateTime(item.createdAt).date}{" "}
+                          {extractDateTime(item.createdAt).time}
+                        </span>
                       </div>
 
-                      <span className="text-xs sm:text-sm text-gray-500">
-                        {extractDateTime(item.createdAt).date}{" "}
-                        {extractDateTime(item.createdAt).time}
-                      </span>
-                    </div>
-
-                    {/* Remark Text */}
-                    <p
-                      className="
+                      {/* Remark Text */}
+                      <p
+                        className="
                 font-[Poppins]
                 font-medium
                 text-[14px]
                 text-[#161616]
               "
-                    >
-                      {item?.remark}
-                    </p>
+                      >
+                        {item?.remark}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="rounded-2xl bg-[#f9fafc] px-4 py-6 text-sm text-slate-500">
+                    No remarks added yet.
                   </div>
-                ))
-              ) : (
-                <div className="rounded-2xl bg-[#f9fafc] px-4 py-6 text-sm text-slate-500">
-                  No remarks added yet.
-                </div>
-              )}
-            </div>
-          </div>
+                )}
+              </div>
+            </div>)}
         </>
       )}
       {openDevelopersModal && (

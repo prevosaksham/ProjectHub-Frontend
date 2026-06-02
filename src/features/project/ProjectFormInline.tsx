@@ -454,7 +454,7 @@ export default function ProjectFormInline({
   const removeDocument = (id: string) => {
     setDocuments((prev) => prev.filter((doc) => doc.id !== id));
   };
-
+  
   return (
     <div className="">
       <div className=" ">

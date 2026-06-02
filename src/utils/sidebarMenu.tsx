@@ -37,6 +37,7 @@ export const sidebarMenu: SidebarMenuItem[] = [
     icon: <FiFolder />,
     roles: [
       ROLES.MANAGER,
+      ROLES.LEADER,
     ],
   },
 
