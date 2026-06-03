@@ -17,7 +17,7 @@ export type UpdateProfilePayload = {
 };
 
 export type ChangePasswordPayload = {
-  currentPassword: string;
+  oldPassword: string;
   newPassword: string;
 };
 

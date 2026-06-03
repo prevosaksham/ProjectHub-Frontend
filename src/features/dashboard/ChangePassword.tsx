@@ -1,6 +1,7 @@
-import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { FiArrowLeft, FiLock } from "react-icons/fi";
+import { FiArrowLeft, FiEye, FiEyeOff, FiLock } from "react-icons/fi";
 import Breadcrumb from "../../components/common/Breadcrumb";
 import { showErrorToast, showSuccessToast } from "../../utils/toast";
 import { changePassword } from "./api/profileApi";
@@ -11,17 +12,28 @@ type PasswordFormValues = {
   confirmPassword: string;
 };
 
+type PasswordError = {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+};
+
 const inputClass =
-  "w-full min-w-0 rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500";
+  "w-full min-w-0 rounded-xl border border-slate-300 px-4 py-3 pr-12 outline-none focus:border-blue-500";
 
 function ChangePassword() {
   const navigate = useNavigate();
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<PasswordFormValues>({
     mode: "onBlur",
@@ -32,23 +44,24 @@ function ChangePassword() {
     },
   });
 
-  const newPassword = watch("newPassword");
+  const newPassword = useWatch({ control, name: "newPassword" });
+
+  const getErrorMessage = (error: unknown) =>
+    (error as PasswordError)?.response?.data?.message ||
+    "Failed to change password. Please try again.";
 
   const onSubmit = async (data: PasswordFormValues) => {
     try {
       await changePassword({
-        currentPassword: data.currentPassword,
-        newPassword: data.newPassword,
-      });
+          oldPassword: data.currentPassword,
+          newPassword: data.newPassword,
+        });
 
       reset();
       showSuccessToast("Password changed successfully.");
       navigate("/profile");
-    } catch (error: any) {
-      showErrorToast(
-        error?.response?.data?.message ||
-          "Failed to change password. Please try again.",
-      );
+    } catch (error: unknown) {
+      showErrorToast(getErrorMessage(error));
     }
   };
 
@@ -91,16 +104,32 @@ function ChangePassword() {
         <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-3">
           <div>
             <label className="mb-2 block font-[Poppins] text-[14px] font-medium leading-[100%] text-[#444444]">
-              Current Password <span className="text-red-500">*</span>
+              Old Password <span className="text-red-500">*</span>
             </label>
-            <input
-              type="password"
-              {...register("currentPassword", {
-                required: "Current password is required",
-              })}
-              className={inputClass}
-              placeholder="Current password"
-            />
+            <div className="relative">
+              <input
+                type={showOldPassword ? "text" : "password"}
+                {...register("currentPassword", {
+                  required: "Old password is required",
+                })}
+                className={inputClass}
+                placeholder="Old password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowOldPassword(!showOldPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                aria-label={
+                  showOldPassword ? "Hide old password" : "Show old password"
+                }
+              >
+                {showOldPassword ? (
+                  <FiEyeOff size={20} />
+                ) : (
+                  <FiEye size={20} />
+                )}
+              </button>
+            </div>
             {errors.currentPassword && (
               <p className="mt-1 text-sm text-red-500">
                 {errors.currentPassword.message}
@@ -112,18 +141,34 @@ function ChangePassword() {
             <label className="mb-2 block font-[Poppins] text-[14px] font-medium leading-[100%] text-[#444444]">
               New Password <span className="text-red-500">*</span>
             </label>
-            <input
-              type="password"
-              {...register("newPassword", {
-                required: "New password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters",
-                },
-              })}
-              className={inputClass}
-              placeholder="New password"
-            />
+            <div className="relative">
+              <input
+                type={showNewPassword ? "text" : "password"}
+                {...register("newPassword", {
+                  required: "New password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
+                })}
+                className={inputClass}
+                placeholder="New password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                aria-label={
+                  showNewPassword ? "Hide new password" : "Show new password"
+                }
+              >
+                {showNewPassword ? (
+                  <FiEyeOff size={20} />
+                ) : (
+                  <FiEye size={20} />
+                )}
+              </button>
+            </div>
             {errors.newPassword && (
               <p className="mt-1 text-sm text-red-500">
                 {errors.newPassword.message}
@@ -135,16 +180,34 @@ function ChangePassword() {
             <label className="mb-2 block font-[Poppins] text-[14px] font-medium leading-[100%] text-[#444444]">
               Confirm Password <span className="text-red-500">*</span>
             </label>
-            <input
-              type="password"
-              {...register("confirmPassword", {
-                required: "Confirm password is required",
-                validate: (value) =>
-                  value === newPassword || "Passwords do not match",
-              })}
-              className={inputClass}
-              placeholder="Confirm password"
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                {...register("confirmPassword", {
+                  required: "Confirm password is required",
+                  validate: (value) =>
+                    value === newPassword || "Passwords do not match",
+                })}
+                className={inputClass}
+                placeholder="Confirm password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                aria-label={
+                  showConfirmPassword
+                    ? "Hide confirm password"
+                    : "Show confirm password"
+                }
+              >
+                {showConfirmPassword ? (
+                  <FiEyeOff size={20} />
+                ) : (
+                  <FiEye size={20} />
+                )}
+              </button>
+            </div>
             {errors.confirmPassword && (
               <p className="mt-1 text-sm text-red-500">
                 {errors.confirmPassword.message}
