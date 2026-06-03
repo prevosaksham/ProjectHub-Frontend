@@ -328,7 +328,7 @@ function AddManager() {
                   onCut={preventCopyPaste}
                   onKeyDown={preventCopyPaste}
                   className={getInputClassName(!!errors.password)}
-                  placeholder="Enter password"
+                  placeholder="Enter Password"
                 />
                 <button
                   type="button"
@@ -365,7 +365,7 @@ function AddManager() {
                   onCut={preventCopyPaste}
                   onKeyDown={preventCopyPaste}
                   className={getInputClassName(!!errors.confirmPassword)}
-                  placeholder="Re-enter password"
+                  placeholder="Re-enter Password"
                 />
                 <button
                   type="button"
