@@ -1219,7 +1219,7 @@ export default function ProjectFormInline({
               <button
                 type="button"
                 onClick={() => navigate("/projects")}
-                className="w-[140px] h-11 px-6 py-3 rounded-lg border border-[#7A7A7A]
+                className="w-35 h-11 px-6 py-3 rounded-lg border border-[#7A7A7A]
     bg-white font-[Poppins] font-medium text-[14px]
     leading-[100%] text-center text-[#7A7A7A]
     hover:bg-gray-50 transition cursor-pointer"
@@ -1229,7 +1229,7 @@ export default function ProjectFormInline({
 
               <button
                 type="submit"
-                className="w-[140px] h-11 px-6 py-3 rounded-lg
+                className="w-35 h-11 px-6 py-3 rounded-lg
     bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)]
     font-[Poppins] font-medium text-[14px]
     leading-[100%] text-center text-white
