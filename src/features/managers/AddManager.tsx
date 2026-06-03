@@ -168,7 +168,7 @@ function AddManager() {
                   },
                 })}
                 className={getInputClassName(!!errors.name)}
-                placeholder="Enter full name"
+                placeholder="Enter Full Name"
               />
               {errors.name && (
                 <p className="mt-1 text-sm text-red-500 text-[12px]">
@@ -192,7 +192,7 @@ function AddManager() {
                   },
                 })}
                 className={getInputClassName(!!errors.email)}
-                placeholder="Enter email address"
+                placeholder="Enter Email Address"
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-500 text-[12px]">
@@ -216,7 +216,7 @@ function AddManager() {
                 })}
                 maxLength={8}
                 className={getInputClassName(!!errors.empId)}
-                placeholder="Enter employee ID"
+                placeholder="Enter Employee ID"
               />
               {errors.empId && (
                 <p className="mt-1 text-sm text-red-500 text-[12px]">
@@ -297,7 +297,7 @@ function AddManager() {
                   target.value = target.value.replace(/\D/g, "").slice(0, 10);
                 }}
                 className={getInputClassName(!!errors.mobileNumber)}
-                placeholder="Enter mobile number"
+                placeholder="Enter Mobile Number"
               />
               {errors.mobileNumber && (
                 <p className="mt-1 text-sm text-red-500 text-[12px]">
