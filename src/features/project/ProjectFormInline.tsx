@@ -364,10 +364,41 @@ export default function ProjectFormInline({
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    const acceptedExtensions = [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".pdf",
+      ".doc",
+      ".docx",
+      ".ppt",
+      ".pptx",
+    ];
+
+    const selectedFiles = Array.from(files);
+    const invalidFiles = selectedFiles.filter(
+      (file) =>
+        !acceptedExtensions.some((ext) =>
+          file.name.toLowerCase().endsWith(ext),
+        ),
+    );
+
+    if (invalidFiles.length > 0) {
+      const errorMessage =
+        "Unsupported file type. Allowed formats: JPEG, PNG, PDF, Word, PPT.";
+      setDocumentError(errorMessage);
+      setError("documents" as any, {
+        type: "manual",
+        message: errorMessage,
+      });
+      showErrorToast(errorMessage);
+      return;
+    }
+
     try {
       setUploadingFile(true);
 
-      const selectedDocs = Array.from(files).map((file) => ({
+      const selectedDocs = selectedFiles.map((file) => ({
         id: generateId(),
         originalName: file.name,
         size: file.size,
@@ -1078,8 +1109,7 @@ export default function ProjectFormInline({
                       </p>
 
                       <p className="font-[Poppins] font-normal text-[12px] leading-4.5 text-center text-[#444444] mt-2">
-                        Supported formats: JPEG, PNG, GIF, MP4, PDF, PSD, AI,
-                        Word, PPT
+                        Supported formats: JPEG, PNG, PDF, Word, PPT
                       </p>
 
                       {uploadingFile && (
@@ -1097,6 +1127,7 @@ export default function ProjectFormInline({
                         type="file"
                         hidden
                         multiple
+                        accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.ppt,.pptx"
                         onChange={handleFileUpload}
                       />
                     </label>
