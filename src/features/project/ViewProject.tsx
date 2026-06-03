@@ -259,14 +259,24 @@ function ViewProject() {
       icon: <CalendarDays size={20} className="text-blue-600" />,
       label: "START DATE",
       value: project?.startDate
-        ? new Date(project.startDate).toLocaleDateString()
+        ? new Date(project.startDate)
+          .toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
         : "-",
     },
     {
       icon: <CalendarDays size={20} className="text-blue-600" />,
       label: "END DATE",
       value: project?.endDate
-        ? new Date(project.endDate).toLocaleDateString()
+        ? new Date(project.endDate)
+          .toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
         : "-",
     },
   ];
