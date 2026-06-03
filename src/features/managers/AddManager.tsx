@@ -13,8 +13,9 @@ function AddManager() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [roleOptions, setRoleOptions] = useState<{ value: string; label: string }[]>(
-    [],);
+  const [roleOptions, setRoleOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
   const {
     register,
     control,
@@ -54,7 +55,7 @@ function AddManager() {
         setRoleOptions(
           roles.map((value) => ({
             value,
-            label: value
+            label: value,
           })),
         );
       } catch (error) {
@@ -103,7 +104,7 @@ function AddManager() {
       console.error(error);
       showErrorToast(
         error?.response?.data?.message ||
-        "Failed to create manager. Please try again.",
+          "Failed to create manager. Please try again.",
       );
     }
   };
@@ -243,7 +244,7 @@ function AddManager() {
                       placeholder="Select Role"
                       value={
                         options.find(
-                          (option) => option.value === field.value
+                          (option) => option.value === field.value,
                         ) || null
                       }
                       onChange={(option) => field.onChange(option?.value)}
@@ -392,7 +393,7 @@ function AddManager() {
           <button
             type="button"
             onClick={() => navigate("/users")}
-            className="w-full sm:w-auto rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer"
+            className="w-full sm:w-33.75 h-11.25 rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer"
           >
             Cancel
           </button>
@@ -401,11 +402,11 @@ function AddManager() {
             type="submit"
             disabled={isSubmitting}
             className="w-full sm:w-33.75 h-11.25 rounded-lg border
-        bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)]
-        px-6 py-3 font-[Poppins] font-medium text-[14px]
-        leading-[100%] tracking-normal text-center text-white
-        transition hover:opacity-90
-        disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+      bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)]
+      px-6 py-3 font-[Poppins] font-medium text-[14px]
+      leading-[100%] tracking-normal text-center text-white
+      transition hover:opacity-90
+      disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </button>

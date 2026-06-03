@@ -50,7 +50,10 @@ const priorities: { value: ProjectPriority; label: string }[] = [
 ];
 
 const generateId = () => {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
     return crypto.randomUUID();
   }
   return `doc-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -240,7 +243,7 @@ export default function ProjectFormInline({
       assignedTo: [],
       devUrl: "",
       uatUrl: "",
-      prodUrl: ""
+      prodUrl: "",
     } as any,
   });
 
@@ -483,7 +486,7 @@ export default function ProjectFormInline({
   const removeDocument = (id: string) => {
     setDocuments((prev) => prev.filter((doc) => doc.id !== id));
   };
-  
+
   return (
     <div className="">
       <div className=" ">
@@ -541,15 +544,17 @@ export default function ProjectFormInline({
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Description&nbsp;
-                    <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
-                      *
-                    </span>
+                  <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
+                    *
+                  </span>
                 </label>
                 <textarea
                   rows={3}
                   {...register(
                     "description",
-                    isSUPER_ADMIN ? {} : { required: "Description is required" },
+                    isSUPER_ADMIN
+                      ? {}
+                      : { required: "Description is required" },
                   )}
                   disabled={isViewOnly}
                   className={getInputClassName(!!errors.description)}
@@ -559,7 +564,7 @@ export default function ProjectFormInline({
                     {errors.description.message}
                   </p>
                 )}
-                {(userRole == "SUPER_ADMIN"||userRole == "ADMIN") && (
+                {(userRole == "SUPER_ADMIN" || userRole == "ADMIN") && (
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       Assigned To&nbsp;
@@ -651,7 +656,9 @@ export default function ProjectFormInline({
                   <Controller
                     name={"status" as any}
                     control={control}
-                    rules={isSUPER_ADMIN ? {} : { required: "Status is required" }}
+                    rules={
+                      isSUPER_ADMIN ? {} : { required: "Status is required" }
+                    }
                     render={({ field }) => (
                       <Select<{ value: ProjectStatus; label: string }, false>
                         {...field}
@@ -874,7 +881,9 @@ export default function ProjectFormInline({
                   <input
                     {...register(
                       "clientName",
-                      isSUPER_ADMIN ? {} : { required: "Client name is required" },
+                      isSUPER_ADMIN
+                        ? {}
+                        : { required: "Client name is required" },
                     )}
                     disabled={isViewOnly}
                     className={getInputClassName(!!errors.clientName)}
@@ -937,9 +946,9 @@ export default function ProjectFormInline({
             <div className="card p-5 space-y-4 md:col-span-2 xl:col-span-3 bg-white  rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
               <label className="block font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-2">
                 Environment Links&nbsp;
-                  <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
-                    *
-                  </span>
+                <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
+                  *
+                </span>
               </label>
 
               <div className="space-y-4">
@@ -978,16 +987,16 @@ export default function ProjectFormInline({
                               env.name as keyof CreateProjectPayload,
                               isSUPER_ADMIN
                                 ? {
-                                  validate: (value) =>
-                                    !value ||
-                                    validateUrl(value) ||
-                                    "Invalid URL",
-                                }
+                                    validate: (value) =>
+                                      !value ||
+                                      validateUrl(value) ||
+                                      "Invalid URL",
+                                  }
                                 : {
-                                  required: `${env.label} URL is required`,
-                                  validate: (value) =>
-                                    validateUrl(value) || "Invalid URL",
-                                },
+                                    required: `${env.label} URL is required`,
+                                    validate: (value) =>
+                                      validateUrl(value) || "Invalid URL",
+                                  },
                             )}
                             disabled={isViewOnly}
                             className={`${getInputClassName(
@@ -1022,9 +1031,9 @@ export default function ProjectFormInline({
             <div className="card p-5 space-y-4 md:col-span-2 xl:col-span-3 bg-white  rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
               <label className="block font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-2">
                 Developers&nbsp;
-                  <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
-                    *
-                  </span>
+                <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
+                  *
+                </span>
               </label>
               <div className="flex gap-2">
                 <input
@@ -1033,7 +1042,7 @@ export default function ProjectFormInline({
                   onKeyDown={handleDeveloperKeyDown}
                   disabled={isViewOnly}
                   className={`flex-1 ${getInputClassName(!!(errors.developers || developerError)).replace(/^w-full /, "")} `}
-                  placeholder="Type name and press Enter"
+                  placeholder="Type name and press enter"
                 />
                 {!isViewOnly && (
                   <button
@@ -1079,9 +1088,9 @@ export default function ProjectFormInline({
             <div className="card p-5 space-y-4 md:col-span-2 xl:col-span-3 bg-white rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
               <label className="block font-[Poppins] font-semibold text-[16px] leading-[100%] tracking-[0%] text-[#161616] mb-2">
                 Documents&nbsp;
-                  <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
-                    *
-                  </span>
+                <span className="text-[#E72027] font-[Poppins] font-medium text-[14px] leading-[100%] tracking-normal">
+                  *
+                </span>
               </label>
 
               {/* 2 Column Layout */}
@@ -1210,24 +1219,22 @@ export default function ProjectFormInline({
               <button
                 type="button"
                 onClick={() => navigate("/projects")}
-                className="w-24.75 h-11.25 px-6 py-3 rounded-lg border border-[#7A7A7A] 
-                 bg-white font-[Poppins] font-medium text-[14px] 
-                 leading-[100%] tracking-normal text-center align-middle 
-                 text-[#7A7A7A] hover:bg-gray-50 transition cursor-pointer"
+                className="w-[140px] h-11 px-6 py-3 rounded-lg border border-[#7A7A7A]
+    bg-white font-[Poppins] font-medium text-[14px]
+    leading-[100%] text-center text-[#7A7A7A]
+    hover:bg-gray-50 transition cursor-pointer"
               >
                 Cancel
               </button>
 
-              {/* Save Details Button */}
               <button
                 type="submit"
-                className=" h-11.25 px-6 py-3 rounded-lg 
-                 bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)] 
-                 font-[Poppins] font-medium text-[14px] 
-                 leading-[100%] tracking-normal text-center align-middle 
-                 text-white 
-                 shadow-[0px_2px_6px_rgba(0,0,0,0.15)] 
-                 hover:opacity-90 transition cursor-pointer"
+                className="w-[140px] h-11 px-6 py-3 rounded-lg
+    bg-[linear-gradient(90deg,#0059FF_0%,#003699_100%)]
+    font-[Poppins] font-medium text-[14px]
+    leading-[100%] text-center text-white
+    shadow-[0px_2px_6px_rgba(0,0,0,0.15)]
+    hover:opacity-90 transition cursor-pointer"
                 style={{
                   borderImage:
                     "linear-gradient(90deg, #6B9FFF 0%, #0059FF 100%) 1",
