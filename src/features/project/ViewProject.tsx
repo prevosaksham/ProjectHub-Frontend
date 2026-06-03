@@ -259,14 +259,24 @@ function ViewProject() {
       icon: <CalendarDays size={20} className="text-blue-600" />,
       label: "START DATE",
       value: project?.startDate
-        ? new Date(project.startDate).toLocaleDateString()
+        ? new Date(project.startDate)
+          .toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
         : "-",
     },
     {
       icon: <CalendarDays size={20} className="text-blue-600" />,
       label: "END DATE",
       value: project?.endDate
-        ? new Date(project.endDate).toLocaleDateString()
+        ? new Date(project.endDate)
+          .toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
         : "-",
     },
   ];
@@ -338,16 +348,16 @@ function ViewProject() {
                   </div>
 
                   <div className="flex-1 space-y-2">
-                    <p className="font-medium text-xs uppercase text-[#7A7A7A]">
+                    <p className="font-[Poppins] font-medium text-xs uppercase text-[#7A7A7A] leading-none">
                       {item.label}
                     </p>
 
                     {typeof item.value === "string" ? (
-                      <p className="font-medium text-sm sm:text-base leading-6 text-[#1E1E1E]">
+                      <p className="font-poppins font-medium text-sm sm:text-base leading-none text-[#161616]">
                         {item.value}
                       </p>
                     ) : (
-                      <div className="font-medium text-sm sm:text-base leading-6 text-[#1E1E1E]">
+                      <div className="font-poppins font-medium text-sm sm:text-base leading-none text-[#161616]">
                         {item.value}
                       </div>
                     )}
@@ -365,11 +375,11 @@ function ViewProject() {
                   </div>
 
                   <div className="flex-1 space-y-2">
-                    <p className="font-medium text-xs uppercase text-[#7A7A7A]">
+                    <p className="font-[Poppins] font-medium text-xs uppercase text-[#7A7A7A] leading-none">
                       {item.label}
                     </p>
 
-                    <p className="font-medium text-sm sm:text-base leading-6 text-[#1E1E1E] wrap-break-word">
+                    <p className="font-poppins font-medium text-sm sm:text-base leading-none text-[#161616] wrap-break-word">
                       {item.value}
                     </p>
                   </div>
@@ -463,7 +473,10 @@ function ViewProject() {
                         onClick={() => setPreviewDocument(doc)}
                         className="ml-3"
                       >
-                        <Eye size={20} className="text-[#00076F] cursor-pointer" />
+                        <Eye
+                          size={20}
+                          className="text-[#00076F] cursor-pointer"
+                        />
                       </button>
                     </div>
                   );

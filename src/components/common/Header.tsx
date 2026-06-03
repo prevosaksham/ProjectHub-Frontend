@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { User, ChevronDown } from "lucide-react";
 import { FiMenu } from "react-icons/fi";
 import toggleImg from "../../assets/Toggle-img.png";
+import menuImg from "../../assets/menu.png";
 
 interface HeaderProps {
   collapsed: boolean;
@@ -22,7 +23,8 @@ function Header({ collapsed, onToggle, onMobileOpen }: HeaderProps) {
       return null;
     }
   })();
-  const userRole = String(currentUser?.name || "").toUpperCase();
+  const Username = currentUser.name;
+  const Role = String(currentUser?.role || "").toUpperCase();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -66,7 +68,7 @@ function Header({ collapsed, onToggle, onMobileOpen }: HeaderProps) {
           aria-label="Toggle sidebar"
         >
           {collapsed ? (
-            <FiMenu size={20} />
+            <img src={menuImg} alt="Menu" className="h-8 w-8 object-contain" />
           ) : (
             <img
               src={toggleImg}
@@ -76,7 +78,7 @@ function Header({ collapsed, onToggle, onMobileOpen }: HeaderProps) {
           )}
         </button>
         <h2 className="hidden sm:block text-sm font-medium text-gray-800 font-[Poppins]">
-          Welcome, <span className="text-[#0059FF]">{userRole}</span>
+          Welcome, <span className="text-[#0059FF]">{Role}</span>
         </h2>
       </div>
 
@@ -90,8 +92,8 @@ function Header({ collapsed, onToggle, onMobileOpen }: HeaderProps) {
             <User size={20} className="text-gray-700 hidden sm:block" />
           </div>
 
-          <h2 className="hidden sm:inline text-sm font-medium text-gray-700">
-            {userRole}
+          <h2 className="block truncate text-[#020202] font-[Poppins]">
+            {Username.slice(0, 20)}
           </h2>
 
           <ChevronDown size={16} className="text-gray-500" />

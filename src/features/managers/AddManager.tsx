@@ -161,6 +161,10 @@ function AddManager() {
                     value: 2,
                     message: "Full name must be at least 2 characters",
                   },
+                  maxLength: {
+                    value: 50,
+                    message: "Full name must be less than 50 characters",
+                  },
                 })}
                 className={getInputClassName(!!errors.name)}
                 placeholder="Enter full name"
