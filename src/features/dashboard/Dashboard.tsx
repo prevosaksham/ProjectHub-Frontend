@@ -111,133 +111,102 @@ function Dashboard() {
 
   const graphData = dashboard?.graphData ?? [];
   const maxValue = Math.max(
-  ...graphData.flatMap((item) => [item.active, item.completed]),
-  0
-);
+    ...graphData.flatMap((item) => [item.active, item.completed]),
+    0
+  );
 
-const dynamicMax = maxValue === 0 ? 10 : Math.ceil((maxValue + 2) / 5) * 5;
+  const dynamicMax = maxValue === 0 ? 10 : Math.ceil((maxValue + 2) / 5) * 5;
 
-const dynamicTickInterval = Math.max(
-  1,
-  Math.ceil(dynamicMax / 5)
-);
-  const chartOptions = {
+  const dynamicTickInterval = Math.max(
+    1,
+    Math.ceil(dynamicMax / 5)
+  );
+  const chartOptions: Highcharts.Options = {
     chart: {
-      type: "spline",
+      type: "areaspline",
       backgroundColor: "transparent",
-      height: 300,
-      spacing: [4, 0, 4, 0],
+      height: 350,
+      spacing: [10, 10, 10, 10],
     },
+
     title: {
       text: "",
     },
-    xAxis: {
-      categories: graphData.map((item) => item.month),
-      lineColor: "#D9D9D9",
-      tickLength: 0,
-      gridLineWidth: 1,
-      gridLineDashStyle: "Dot",
-      gridLineColor: "#E3E3E3",
-      labels: {
-        y: 18,
-        style: {
-          color: "#7A7A7A",
-          fontSize: "12px",
-          fontFamily: "Poppins",
-        },
-      },
-    },
-    yAxis: {
-       min: 0,
-      max: dynamicMax,
-      tickInterval: dynamicTickInterval,
-      lineWidth: 1,
-      lineColor: "#D9D9D9",
-      gridLineWidth: 1,
-      gridLineDashStyle: "Dot",
-      gridLineColor: "#DCDCDC",
-      title: {
-        text: "Projects",
-        margin: 8,
-        style: {
-          color: "#1E1E1E",
-          fontSize: "12px",
-          fontFamily: "Poppins",
-        },
-      },
-      labels: {
-        x: -4,
-        style: {
-          color: "#7A7A7A",
-          fontSize: "12px",
-          fontFamily: "Poppins",
-        },
-      },
-    },
-    tooltip: {
-      shared: true,
-      backgroundColor: "#FFFFFF",
-      borderColor: "#E5E7EB",
-      borderRadius: 8,
-      style: {
-        color: "#1E1E1E",
-        fontSize: "12px",
-        fontFamily: "Poppins",
-      },
-    },
-    legend: {
-      align: "center",
-      verticalAlign: "bottom",
-      layout: "horizontal",
-      symbolHeight: 6,
-      symbolWidth: 14,
-      symbolRadius: 6,
-      itemDistance: 22,
-      margin: 4,
-      itemStyle: {
-        color: "#5E5E5E",
-        fontSize: "12px",
-        fontWeight: "400",
-        fontFamily: "Poppins",
-      },
-    },
+
     credits: {
       enabled: false,
     },
-    plotOptions: {
-      spline: {
-        lineWidth: 1,
-        marker: {
-          enabled: true,
-          radius: 3,
-          lineWidth: 1,
-          fillColor: "#FFFFFF",
-        },
-        states: {
-          hover: {
-            lineWidthPlus: 0,
-          },
+
+    xAxis: {
+      categories: graphData.map((item) => item.month),
+      lineColor: "#E5E7EB",
+      tickLength: 0,
+      labels: {
+        style: {
+          color: "#6B7280",
+          fontSize: "12px",
+          fontFamily: "Poppins",
         },
       },
     },
-    series: [
-      {
-        name: "Active",
-        type: "spline",
-        data: graphData.map((item) => item.active),
-        color: "#252D9E",
-        marker: {
-          lineColor: "#252D9E",
+
+    yAxis: {
+      min: 0,
+      max: dynamicMax,
+      tickInterval: dynamicTickInterval,
+      title: {
+        text: "",
+      },
+      gridLineColor: "#F1F5F9",
+      labels: {
+        style: {
+          color: "#6B7280",
+          fontSize: "12px",
+          fontFamily: "Poppins",
         },
       },
-      {
-        name: "Completed",
-        type: "spline",
-        data: graphData.map((item) => item.completed),
-        color: "#208A17",
+    },
+
+    tooltip: {
+      shared: true,
+      borderRadius: 10,
+      backgroundColor: "#FFFFFF",
+      borderColor: "#E5E7EB",
+    },
+
+    legend: {
+      align: "center",
+      verticalAlign: "bottom",
+      itemStyle: {
+        fontSize: "13px",
+        fontWeight: "500",
+        fontFamily: "Poppins",
+      },
+    },
+
+    plotOptions: {
+      areaspline: {
+        fillOpacity: 0.15,
+        lineWidth: 3,
         marker: {
-          lineColor: "#208A17",
+          enabled: true,
+          radius: 5,
         },
+      },
+    },
+
+    series: [
+      {
+        name: "Active Projects",
+        type: "areaspline",
+        data: graphData.map((item) => item.active),
+        color: "#2563EB",
+      },
+      {
+        name: "Completed Projects",
+        type: "areaspline",
+        data: graphData.map((item) => item.completed),
+        color: "#22C55E",
       },
     ],
   };
@@ -286,10 +255,17 @@ const dynamicTickInterval = Math.max(
       </div>
 
       {/* GRAPH SECTION */}
-      <div className="mt-5 rounded-none bg-white border border-[#ECECEC] px-4 py-4">
-        <h3 className="text-[18px] font-semibold text-[#1E1E1E] font-[Poppins] mb-3">
-          Projects Insights
-        </h3>
+      <div className="mt-5 rounded-xl border border-[#ECECEC] bg-white p-5 shadow-sm">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-[#111827]">
+              Monthly Project Trend
+            </h3>
+            <p className="text-sm text-[#6B7280]">
+              Active vs Completed projects month wise
+            </p>
+          </div>
+        </div>
 
         <HighchartsReact
           highcharts={Highcharts}
@@ -297,12 +273,12 @@ const dynamicTickInterval = Math.max(
         />
       </div>
 
-</div>
-       
+    </div>
 
-      
 
-    
+
+
+
   );
 }
 

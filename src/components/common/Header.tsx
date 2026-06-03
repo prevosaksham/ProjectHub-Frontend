@@ -92,7 +92,7 @@ function Header({ collapsed, onToggle, onMobileOpen }: HeaderProps) {
             <User size={20} className="text-gray-700 hidden sm:block" />
           </div>
 
-          <h2 className="block truncate text-[#020202]">
+          <h2 className="block truncate text-[#020202] font-[Poppins]">
             {Username.slice(0, 20)}
           </h2>
 
