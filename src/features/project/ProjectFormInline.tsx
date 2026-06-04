@@ -231,6 +231,8 @@ export default function ProjectFormInline({
     setError,
     clearErrors,
     setValue,
+    getValues,
+    watch,
     formState: { errors },
   } = useForm<CreateProjectPayload>({
     defaultValues: {
@@ -250,6 +252,30 @@ export default function ProjectFormInline({
 
   const getInputClassName = (hasError?: boolean) =>
     `w-full rounded-xl border px-4 py-3 outline-none ${hasError ? "border-red-500 focus:border-red-500" : "border-slate-300 focus:border-blue-500"}`;
+
+  const [dateValidationErrorShown, setDateValidationErrorShown] = useState(false);
+  const watchStartDate = watch("startDate");
+  const watchEndDate = watch("endDate");
+
+  useEffect(() => {
+    if (!watchStartDate || !watchEndDate) {
+      setDateValidationErrorShown(false);
+      return;
+    }
+
+    const start = new Date(watchStartDate);
+    const end = new Date(watchEndDate);
+
+    if (start > end) {
+      if (!dateValidationErrorShown) {
+        showErrorToast("Start date cannot be later than end date.");
+        setDateValidationErrorShown(true);
+      }
+    } else {
+      setDateValidationErrorShown(false);
+    }
+
+  }, [watchStartDate, watchEndDate, dateValidationErrorShown]);
 
   useEffect(() => {
     const normalizeDoc = (d: any) => {
@@ -907,6 +933,13 @@ export default function ProjectFormInline({
                     type="date"
                     {...register("startDate", {
                       required: "Start date is required",
+                      validate: (value) => {
+                        const endDate = getValues("endDate");
+                        if (value && endDate && new Date(value) > new Date(endDate)) {
+                          return "Start date cannot be later than end date";
+                        }
+                        return true;
+                      },
                     })}
                     disabled={isViewOnly}
                     className={getInputClassName(!!errors.startDate)}
@@ -930,7 +963,26 @@ export default function ProjectFormInline({
                     type="date"
                     {...register(
                       "endDate",
-                      isSUPER_ADMIN ? {} : { required: "End date is required" },
+                      isSUPER_ADMIN
+                        ? {
+                            validate: (value) => {
+                              const startDate = getValues("startDate");
+                              if (value && startDate && new Date(value) < new Date(startDate)) {
+                                return "End date cannot be before start date";
+                              }
+                              return true;
+                            },
+                          }
+                        : {
+                            required: "End date is required",
+                            validate: (value) => {
+                              const startDate = getValues("startDate");
+                              if (value && startDate && new Date(value) < new Date(startDate)) {
+                                return "End date cannot be before start date";
+                              }
+                              return true;
+                            },
+                          },
                     )}
                     disabled={isViewOnly}
                     className={getInputClassName(!!errors.endDate)}
