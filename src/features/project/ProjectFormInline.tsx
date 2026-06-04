@@ -268,7 +268,7 @@ export default function ProjectFormInline({
 
     if (start > end) {
       if (!dateValidationErrorShown) {
-        showErrorToast("Start date cannot be later than end date.");
+        showErrorToast("Start date must be before the end date.");
         setDateValidationErrorShown(true);
       }
     } else {
@@ -936,7 +936,7 @@ export default function ProjectFormInline({
                       validate: (value) => {
                         const endDate = getValues("endDate");
                         if (value && endDate && new Date(value) > new Date(endDate)) {
-                          return "Start date cannot be later than end date";
+                          return "Start date must be before the end date";
                         }
                         return true;
                       },
@@ -968,7 +968,7 @@ export default function ProjectFormInline({
                             validate: (value) => {
                               const startDate = getValues("startDate");
                               if (value && startDate && new Date(value) < new Date(startDate)) {
-                                return "End date cannot be before start date";
+                                return "End date must be after the start date";
                               }
                               return true;
                             },
@@ -978,7 +978,7 @@ export default function ProjectFormInline({
                             validate: (value) => {
                               const startDate = getValues("startDate");
                               if (value && startDate && new Date(value) < new Date(startDate)) {
-                                return "End date cannot be before start date";
+                                return "End date must be after the start date";
                               }
                               return true;
                             },
