@@ -51,6 +51,18 @@ function ProjectFormModal({
     });
 
     useEffect(() => {
+        const currentUser = JSON.parse(
+    localStorage.getItem("user") || "{}"
+  );
+
+  const role = String(currentUser?.role || "").toUpperCase();
+
+  if (
+    role !== "SUPER_ADMIN" &&
+    role !== "ADMIN"
+  ) {
+    return;
+  }
         const loadAssignableUsers = async () => {
             try {
                 const users = await getAssignableUsers();

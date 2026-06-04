@@ -46,7 +46,7 @@ const priorities: { value: ProjectPriority; label: string }[] = [
   { value: "LOW", label: "Low" },
   { value: "MEDIUM", label: "Medium" },
   { value: "HIGH", label: "High" },
-  { value: "CRITICAL", label: "Critical" },
+  { value: "URGENT", label: "Urgent" },
 ];
 
 const generateId = () => {

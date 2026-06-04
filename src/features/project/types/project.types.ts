@@ -6,7 +6,7 @@ export type ProjectStatus =
   | "ON_HOLD"
   | "CANCELLED";
 
-export type ProjectPriority = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+export type ProjectPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 
 export interface ProjectMember {
   assignedTo?: {
