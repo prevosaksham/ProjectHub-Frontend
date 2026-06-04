@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Folder,
@@ -29,6 +29,7 @@ function ViewProject() {
   const [remark, setRemark] = useState("");
   const [remarkLoading, setRemarkLoading] = useState(false);
   const [openDevelopersModal, setOpenDevelopersModal] = useState(false);
+  const remarkListRef = useRef<HTMLDivElement | null>(null);
 
   const [previewDocument, setPreviewDocument] = useState<any | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -294,8 +295,12 @@ function ViewProject() {
         toast.success(response?.message || "Remark added successfully!");
 
         const updatedProject = await getProjectById(id);
-
         setProject(updatedProject);
+
+        remarkListRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
       }
     } catch (error) {
       console.error("Error saving remark:", error);
@@ -536,7 +541,10 @@ function ViewProject() {
               </div>
 
               {/* Remarks List */}
-              <div className="max-h-80 overflow-y-auto space-y-4 pr-1">
+              <div
+                ref={remarkListRef}
+                className="max-h-80 overflow-y-auto space-y-4 pr-1 remark-list-scroll"
+              >
                 {project?.remarks?.length ? (
                   project?.remarks?.map((item: Remark) => (
                     <div

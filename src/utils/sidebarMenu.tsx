@@ -18,6 +18,7 @@ export const sidebarMenu: SidebarMenuItem[] = [
       ROLES.MANAGER,
       ROLES.DEVELOPER,
       ROLES.ADMIN,
+      ROLES.LEADER,
     ],
   },
 
@@ -28,6 +29,7 @@ export const sidebarMenu: SidebarMenuItem[] = [
     roles: [
       ROLES.SUPER_ADMIN,
       ROLES.ADMIN,
+      ROLES.LEADER,
     ],
   },
 
@@ -37,7 +39,6 @@ export const sidebarMenu: SidebarMenuItem[] = [
     icon: <FiFolder />,
     roles: [
       ROLES.MANAGER,
-      ROLES.LEADER,
     ],
   },
 

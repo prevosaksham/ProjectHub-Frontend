@@ -87,6 +87,7 @@ export default function ProjectFormInline({
   })();
   const userRole = String(currentUser?.role || "").toUpperCase();
   const isSUPER_ADMIN = userRole === "SUPER_ADMIN";
+  const canManageMembers = project?.canManageMembers !== false;
 
   const getDocumentUrl = (doc: ProjectDocument) => {
     const docBaseUrl = import.meta.env.VITE_DOC_VIEW_URL?.replace(/\/$/, "");
@@ -564,7 +565,7 @@ export default function ProjectFormInline({
                     {errors.description.message}
                   </p>
                 )}
-                {(userRole == "SUPER_ADMIN" || userRole == "ADMIN") && (
+                {(userRole == "SUPER_ADMIN" || userRole == "ADMIN" || userRole == "LEADERSHIP") && (
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       Assigned To&nbsp;
@@ -578,7 +579,7 @@ export default function ProjectFormInline({
                       control={control}
                       rules={{
                         validate: (value) =>
-                          Array.isArray(value) && value.length > 0
+                          !canManageMembers || (Array.isArray(value) && value.length > 0)
                             ? true
                             : "Assigned To is required",
                       }}
@@ -593,7 +594,7 @@ export default function ProjectFormInline({
                             {...field}
                             isMulti
                             hideSelectedOptions={true}
-                            isDisabled={isViewOnly}
+                            isDisabled={isViewOnly || !canManageMembers}
                             closeMenuOnSelect={false}
                             options={selectOptions}
                             value={selectOptions.filter((opt) =>

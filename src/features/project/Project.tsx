@@ -101,8 +101,8 @@ function Projects() {
       console.error("Failed to toggle project state:", error);
       showErrorToast(
         error?.response?.data?.message ||
-          error?.message ||
-          "Failed to update project status. Please try again.",
+        error?.message ||
+        "Failed to update project status. Please try again.",
       );
     }
   };
@@ -142,22 +142,28 @@ function Projects() {
             />
           </div>
 
-          {(userRole === "SUPER_ADMIN" || userRole === "ADMIN") && (
-            <button
-              onClick={() => {
-                setSelectedProject(null);
-                setModalOpen(true);
-              }}
-              className="inline-flex h-10 sm:h-11.25 items-center gap-2 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm font-medium text-white whitespace-nowrap cursor-pointer"
-              style={{
-                background: "linear-gradient(90deg, #0059FF 0%, #003699 100%)",
-              }}
-            >
-              <img src={plusIcon} alt="+" className="h-4 w-4 object-contain" />
-              <span className="hidden sm:inline">Add Project</span>
-              <span className="sm:hidden">Add</span>
-            </button>
-          )}
+          {(userRole === "SUPER_ADMIN" ||
+            userRole === "ADMIN" ||
+            userRole === "LEADERSHIP") && (
+              <button
+                onClick={() => {
+                  if (userRole === "LEADERSHIP") {
+                    navigate("/projects/add-edit");
+                  } else {
+                    setSelectedProject(null);
+                    setModalOpen(true);
+                  }
+                }}
+                className="inline-flex h-10 sm:h-11.25 items-center gap-2 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm font-medium text-white whitespace-nowrap cursor-pointer"
+                style={{
+                  background: "linear-gradient(90deg, #0059FF 0%, #003699 100%)",
+                }}
+              >
+                <img src={plusIcon} alt="+" className="h-4 w-4 object-contain" />
+                <span className="hidden sm:inline">Add Project</span>
+                <span className="sm:hidden">Add</span>
+              </button>
+            )}
         </div>
       </div>
 
@@ -179,11 +185,11 @@ function Projects() {
             //     documents.
             //   </p>
             // </div>
-               <EmptyState
-            icon={<FiUsers size={30} />}
-            title="No projects yet"
-            description="Create your first project to start tracking work, developers, and documents."
-          /> 
+            <EmptyState
+              icon={<FiUsers size={30} />}
+              title="No projects yet"
+              description="Create your first project to start tracking work, developers, and documents."
+            />
           ) : (
             <>
               <table className="min-w-175 w-full table-fixed border-separate border-spacing-y-2">
@@ -274,7 +280,7 @@ function Projects() {
                           </button>
                           <button
                             onClick={() => {
-                              if (userRole === "SUPER_ADMIN"|| userRole === "ADMIN") {
+                              if (userRole === "SUPER_ADMIN" || userRole === "ADMIN") {
                                 setSelectedProject(p);
                                 setModalOpen(true);
                               } else {
@@ -286,7 +292,7 @@ function Projects() {
                             className="relative flex h-8 w-8 items-center justify-center rounded-lg gap-2 p-2 bg-[#EEF4FF] text-[#0059FF] hover:bg-[#dde9ff] cursor-pointer"
                           >
                             <FiEdit2 size={16} />
-                            {(userRole !== "SUPER_ADMIN" && userRole !== "ADMIN") && !p.isSetupCompleted && (
+                            {(userRole !== "SUPER_ADMIN" && userRole !== "ADMIN" && userRole !== "LEADERSHIP") && !p.isSetupCompleted && (
                               <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-red-500"></span>
                             )}
                           </button>
@@ -294,11 +300,10 @@ function Projects() {
                           {(userRole === "SUPER_ADMIN" || userRole === "ADMIN") && (
                             <button
                               onClick={() => handleToggle(p)}
-                              className={`flex h-8 w-8 items-center justify-center rounded-lg cursor-pointer ${
-                                p.isEnabled
+                              className={`flex h-8 w-8 items-center justify-center rounded-lg cursor-pointer ${p.isEnabled
                                   ? "bg-[#E8F5E9] text-[#2370ff] hover:bg-[#d7efd7]"
                                   : "bg-[#F5F5F5] text-[#6B7280] hover:bg-[#e5e7eb]"
-                              }`}
+                                }`}
                               title={p.isEnabled ? "Disable project" : "Enable project"}
                             >
                               {p.isEnabled ? (
