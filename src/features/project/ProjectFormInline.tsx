@@ -950,7 +950,6 @@ export default function ProjectFormInline({
                   *
                 </span>
               </label>
-
               <div className="space-y-4">
                 {[
                   {
@@ -968,64 +967,49 @@ export default function ProjectFormInline({
                     label: "PROD",
                     color: "bg-green-100 text-green-700",
                   },
-                ].map((env) => {
-                  return (
-                    <div className="px-2 py-0 bg-white border border-[#E5E5E5] rounded-lg">
+                ].map((env) => (
+                  <div
+                    key={env.name}
+                    className="px-2 py-2 bg-white border border-[#E5E5E5] rounded-lg"
+                  >
+                    <div className="flex items-center gap-2 sm:grid sm:grid-cols-[80px_1fr]">
                       <div
-                        key={env.name}
-                        className="flex items-center gap-2 sm:grid sm:grid-cols-[80px_1fr] sm:gap-1"
+                        className={`flex shrink-0 w-13.75 h-7.5 items-center justify-center rounded-[26px] px-4 py-1.5 text-xs font-bold ${env.color}`}
                       >
-                        <div
-                          className={`flex shrink-0 w-13.75 h-7.5 items-center justify-center rounded-[26px] px-4 py-1.5 text-xs font-bold ${env.color}`}
-                        >
-                          {env.label}
-                        </div>
+                        {env.label}
+                      </div>
 
-                        <div className="flex-1 min-w-0 overflow-x-auto">
-                          <input
-                            {...register(
-                              env.name as keyof CreateProjectPayload,
-                              isSUPER_ADMIN
-                                ? {
-                                    validate: (value) =>
-                                      !value ||
-                                      validateUrl(value) ||
-                                      "Invalid URL",
-                                  }
-                                : {
-                                    required: `${env.label} URL is required`,
-                                    validate: (value) =>
-                                      validateUrl(value) || "Invalid URL",
-                                  },
-                            )}
-                            disabled={isViewOnly}
-                            className={`${getInputClassName(
-                              !!errors[env.name as keyof CreateProjectPayload],
-                            )} w-full min-w-75 border-none focus:outline-none focus:ring-0 font-[Poppins] placeholder:text-[#7A7A7A] placeholder:font-medium placeholder:text-[14px]`}
-                            placeholder={
-                              env.label === "DEV"
-                                ? "Enter Dev URL"
-                                : env.label === "UAT"
-                                  ? "Enter UAT URL"
-                                  : env.label === "PROD"
-                                    ? "Enter PROD URL"
-                                    : "Enter here..."
-                            }
-                          />
-                        </div>
-
-                        {errors[env.name as keyof CreateProjectPayload] && (
-                          <p className="w-full sm:col-span-2 mt-1 text-[12px] text-red-500">
-                            {
-                              errors[env.name as keyof CreateProjectPayload]
-                                ?.message
-                            }
-                          </p>
-                        )}
+                      <div className="flex-1 min-w-0">
+                        <input
+                          {...register(
+                            env.name as keyof CreateProjectPayload,
+                            isSUPER_ADMIN
+                              ? {
+                                validate: (value) =>
+                                  !value || validateUrl(value) || "Invalid URL",
+                              }
+                              : {
+                                required: `${env.label} URL is required`,
+                                validate: (value) =>
+                                  validateUrl(value) || "Invalid URL",
+                              }
+                          )}
+                          disabled={isViewOnly}
+                          className={`${getInputClassName(
+                            !!errors[env.name as keyof CreateProjectPayload]
+                          )} w-full border-none focus:outline-none focus:ring-0 font-[Poppins] placeholder:text-[#7A7A7A] placeholder:font-medium placeholder:text-[14px]`}
+                          placeholder={`Enter ${env.label} URL`}
+                        />
                       </div>
                     </div>
-                  );
-                })}
+
+                    {errors[env.name as keyof CreateProjectPayload] && (
+                      <p className="mt-1 text-xs text-red-500 wrap-break-word">
+                        {errors[env.name as keyof CreateProjectPayload]?.message}
+                      </p>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
             <div className="card p-5 space-y-4 md:col-span-2 xl:col-span-3 bg-white  rounded-2xl shadow-[0px_4px_16px_0px_#00000014]">
@@ -1049,9 +1033,9 @@ export default function ProjectFormInline({
                     type="button"
                     onClick={addDeveloper}
                     className="rounded-xl border border-[#0059FF] bg-white px-4 py-2 
-             font-[Poppins] font-medium text-[14px] 
-             leading-[100%] tracking-normal text-center align-middle 
-             text-[#0059FF] hover:bg-blue-50 transition cursor-pointer"
+                            font-[Poppins] font-medium text-[14px] 
+                            leading-[100%] tracking-normal text-center align-middle 
+                            text-[#0059FF] hover:bg-blue-50 transition cursor-pointer"
                   >
                     Add
                   </button>
