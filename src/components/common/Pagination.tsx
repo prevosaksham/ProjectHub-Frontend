@@ -49,7 +49,7 @@ function Pagination({
         <button
           onClick={() => onPageChange?.(1)}
           disabled={page <= 1}
-          className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+          className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
         >
           <FiChevronsLeft size={16} />
         </button>
@@ -57,7 +57,7 @@ function Pagination({
         <button
           onClick={onPrev}
           disabled={page <= 1}
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
         >
           <FiChevronLeft size={16} />
         </button>
@@ -71,7 +71,7 @@ function Pagination({
             <button
               key={pageNum}
               onClick={() => onPageChange?.(pageNum as number)}
-              className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium ${
+              className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium cursor-pointer ${
                 pageNum === page
                   ? "bg-[#0059FF] text-white"
                   : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
@@ -85,7 +85,7 @@ function Pagination({
         <button
           onClick={onNext}
           disabled={page >= totalPages}
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
         >
           <FiChevronRight size={16} />
         </button>
@@ -93,7 +93,7 @@ function Pagination({
         <button
           onClick={() => onPageChange?.(totalPages)}
           disabled={page >= totalPages}
-          className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+          className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
         >
           <FiChevronsRight size={16} />
         </button>
