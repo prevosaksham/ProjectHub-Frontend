@@ -30,6 +30,7 @@ export const listProjects = async (
   limit = 10,
   managerId?: string,
   search?: string,
+  role?: string,
 ): Promise<ListProjectsResult> => {
   const queryParts = [`page=${page}`, `limit=${limit}`];
 
@@ -39,6 +40,10 @@ export const listProjects = async (
 
   if (search && search.trim()) {
     queryParts.push(`search=${encodeURIComponent(search.trim())}`);
+  }
+
+  if (role && role.trim()) {
+    queryParts.push(`role=${encodeURIComponent(role.trim())}`);
   }
 
   const res = await api.get(`/project/projects?${queryParts.join("&")}`);

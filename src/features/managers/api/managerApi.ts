@@ -13,10 +13,13 @@ export type ListManagersResult = {
 };
 
 export const listManagers =
-  async (page = 1, limit = 10, search?: string): Promise<ListManagersResult> => {
+  async (page = 1, limit = 10, search?: string, role?: string): Promise<ListManagersResult> => {
     const queryParts = [`page=${page}`, `limit=${limit}`];
     if (search && search.trim()) {
       queryParts.push(`search=${encodeURIComponent(search.trim())}`);
+    }
+    if (role) {
+      queryParts.push(`role=${encodeURIComponent(role)}`);
     }
 
     const response = await api.get(`/users?${queryParts.join("&")}`);

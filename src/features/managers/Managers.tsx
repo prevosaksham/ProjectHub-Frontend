@@ -9,28 +9,32 @@ import {
   FiChevronRight,
 } from "react-icons/fi";
 import plusIcon from "../../assets/plus icon.png";
+import Select from "react-select";
 import { listManagers, toggleManager } from "./api/managerApi";
 import type { Manager } from "./types/manager.types";
 import { showErrorToast, showSuccessToast } from "../../utils/toast";
 import SkeletonLoader from "../../components/common/SkeletonLoader";
 import Pagination from "../../components/common/Pagination";
 import EmptyState from "../../components/Emptyset";
+import { getRoles } from "../../api/rolesApi";
 
 function Managers() {
   const [items, setItems] = useState<Manager[]>([]);
   const [page, setPage] = useState<number>(1);
+  const [selectedRole, setSelectedRole] = useState<string>("");
   const [limit] = useState<number>(5);
   const [total, setTotal] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState<string>("");
+  const [roleOptions, setRoleOptions] = useState<{ value: string; label: string }[]>([]);
   const navigate = useNavigate();
 
-  const fetchManagers = async (p = page, searchTerm = search) => {
+  const fetchManagers = async (p = page, searchTerm = search, role = selectedRole) => {
     try {
       setLoading(true);
-      const res = await listManagers(p, limit, searchTerm);
-      console.log("Managers:", res.users, "search:", searchTerm);
+      const res = await listManagers(p, limit, searchTerm, role);
+      console.log("Managers:", res.users, "search:", searchTerm, "role:", role);
 
       setItems(res.users);
       setTotal(res.total);
@@ -44,11 +48,39 @@ function Managers() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setPage(1);
-      fetchManagers(1, search);
+      fetchManagers(1, search,selectedRole);
     }, 400);
 
     return () => clearTimeout(timeout);
-  }, [search]);
+  }, [search,selectedRole]);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadRoles = async () => {
+      try {
+        const roles = await getRoles();
+        if (!active) {
+          return;
+        }
+
+        setRoleOptions(
+          roles.map((value) => ({
+            value,
+            label: value,
+          })),
+        );
+      } catch (error) {
+        console.error("Failed to load role options", error);
+      }
+    };
+
+    loadRoles();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleToggle = async (manager: Manager) => {
     try {
@@ -110,6 +142,72 @@ function Managers() {
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search"
               className="h-10 sm:h-11.25 w-full sm:w-80 rounded-lg border border-[#DCDCDC] bg-white py-3 pl-9 pr-4 text-sm text-slate-700 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="w-full sm:w-72">
+            <Select
+              inputId="roleFilter"
+              value={roleOptions.find((option) => option.value === selectedRole) || null}
+              placeholder="Filter by role"
+              isClearable
+              onChange={(option) => setSelectedRole(option?.value || "")}
+              options={roleOptions}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  background: "#FFFFFF",
+                  borderRadius: "0.65rem",
+                  borderColor: "#DCDCDC",
+                  minHeight: "2.75rem",
+                  boxShadow: "none",
+                  cursor: "pointer",
+                  "&:hover": {
+                    borderColor: "#0059FF",
+                  },
+                }),
+                valueContainer: (base) => ({
+                  ...base,
+                  padding: "0 0.75rem",
+                  height: "2.75rem",
+                }),
+                input: (base) => ({
+                  ...base,
+                  margin: 0,
+                  padding: 0,
+                }),
+                placeholder: (base) => ({
+                  ...base,
+                  color: "#94a3b8",
+                }),
+                singleValue: (base) => ({
+                  ...base,
+                  color: "#334155",
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isFocused ? "#eef4ff" : "#ffffff",
+                  color: state.isSelected ? "#0059FF" : "#0f172a",
+                  cursor: "pointer",
+                }),
+                menu: (base) => ({
+                  ...base,
+                  borderRadius: "0.75rem",
+                  boxShadow: "0 10px 30px rgba(15, 23, 42, 0.08)",
+                }),
+              }}
+              theme={(theme) => ({
+                ...theme,
+                borderRadius: 10,
+                colors: {
+                  ...theme.colors,
+                  primary25: "#eef4ff",
+                  primary: "#0059FF",
+                  neutral20: "#DCDCDC",
+                  neutral30: "#94a3b8",
+                  neutral80: "#0f172a",
+                },
+              })}
             />
           </div>
 
