@@ -167,10 +167,9 @@ function Dashboard() {
 
   const chartOptions: Highcharts.Options = {
     chart: {
-      type: "areaspline",
+      type: "column",
       backgroundColor: "transparent",
       height: 350,
-      spacing: [10, 10, 10, 10],
     },
 
     title: {
@@ -213,9 +212,17 @@ function Dashboard() {
 
     tooltip: {
       shared: true,
-      borderRadius: 10,
-      backgroundColor: "#FFFFFF",
-      borderColor: "#E5E7EB",
+      headerFormat: "",
+      formatter: function () {
+        return (
+          this.points
+            ?.map(
+              (point) =>
+                `<span style="color:${point.color}">●</span> ${point.series.name}: <b>${point.y}</b> project${point.y === 1 ? "" : "s"}`,
+            )
+            .join("<br/>") || ""
+        );
+      },
     },
 
     legend: {
@@ -229,18 +236,16 @@ function Dashboard() {
     },
 
     plotOptions: {
-      areaspline: {
-        fillOpacity: 0.15,
-        lineWidth: 3,
-        marker: {
-          enabled: true,
-          radius: 5,
-        },
+      column: {
+        borderRadius: 4,
+        pointPadding: 0.1,
+        groupPadding: 0.15,
         cursor: "pointer",
         point: {
           events: {
             click: function (this: Highcharts.Point) {
               const month = String(this.category);
+
               if (selectedMonth === month && panelOpen) {
                 setPanelOpen(false);
                 setSelectedMonth(null);
@@ -256,14 +261,14 @@ function Dashboard() {
 
     series: [
       {
-        name: "Active Projects",
-        type: "areaspline",
+        name: "Active",
+        type: "column",
         data: graphData.map((item) => item.active),
         color: "#2563EB",
       },
       {
-        name: "Completed Projects",
-        type: "areaspline",
+        name: "Completed",
+        type: "column",
         data: graphData.map((item) => item.completed),
         color: "#22C55E",
       },
@@ -537,12 +542,12 @@ function Dashboard() {
                             flexShrink: 0,
                             background:
                               project.status === "COMPLETED"
-                                ? "#DBEAFE"
-                                : "#DCFCE7",
+                                ? "#DCFCE7"
+                                : "#DBEAFE",
                             color:
                               project.status === "COMPLETED"
-                                ? "#1D4ED8"
-                                : "#15803D",
+                                ? "#15803D"
+                                : "#1D4ED8",
                           }}
                         >
                           {project.status}
