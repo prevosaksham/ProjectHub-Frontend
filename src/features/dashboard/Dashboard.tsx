@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { getDashboardApi } from "../dashboard/api/DashboardApi";
 import Highcharts from "highcharts";
 import { HighchartsReact } from "highcharts-react-official";
- 
+
 interface KpiTile {
   label: string;
   value: number | string;
@@ -16,7 +16,7 @@ interface KpiTile {
   circleIcon: string;
   gradient: string;
 }
- 
+
 interface ActiveProject {
   name: string;
   startDate: string | null;
@@ -48,17 +48,18 @@ interface DashboardData {
 const formatDate = (dateStr: string | null): string => {
   if (!dateStr) return "-";
   return new Date(dateStr).toLocaleDateString("en-GB", {
-    day: "2-digit", month: "short", year: "numeric",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
   });
 };
- 
+
 function Dashboard() {
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
- 
+
   const stats: KpiTile[] = [
     {
       label: "Total Projects",
@@ -82,7 +83,7 @@ function Dashboard() {
       gradient: "linear-gradient(180deg, #4D3190 0%, #1B084A 100%)",
     },
   ];
- 
+
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
@@ -96,14 +97,14 @@ function Dashboard() {
     };
     fetchDashboard();
   }, []);
- 
+
   if (loading) {
     return (
       <div className="p-4 sm:p-6">
         <h2 className="text-lg sm:text-xl font-semibold text-[#00076F] font-[Poppins]">
           Dashboard
         </h2>
- 
+
         {/* KPI Skeleton Loaders */}
         <div className="mt-3 grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 md:grid-cols-2 xl:grid-cols-3">
           {[...Array(3)].map((_, idx) => (
@@ -124,7 +125,7 @@ function Dashboard() {
             </div>
           ))}
         </div>
- 
+
         {/* Graph skeleton */}
         <div className="mt-5 rounded-none bg-white border border-[#ECECEC] px-4 py-4">
           <div className="h-6 w-40 bg-linear-to-r from-slate-300 to-slate-200 rounded mb-4 animate-pulse"></div>
@@ -133,36 +134,35 @@ function Dashboard() {
       </div>
     );
   }
- 
+
   const graphData = dashboard?.graphData ?? [];
   console.log("first item:", graphData[0]);
   console.log("completedProject value:", graphData[0]?.completed);
   console.log("completed value:", graphData[0]?.completed);
   const maxValue = Math.max(
     ...graphData.flatMap((item) => [item.active, item.completed]),
-    0
-  );
- 
-  const dynamicMax = maxValue === 0 ? 10 : Math.ceil((maxValue + 2) / 5) * 5;
- 
-  const dynamicTickInterval = Math.max(
-    1,
-    Math.ceil(dynamicMax / 5)
+    0,
   );
 
-    const selectedMonthData = graphData.find((g) => g.month === selectedMonth);
+  const dynamicMax = maxValue === 0 ? 10 : Math.ceil((maxValue + 2) / 5) * 5;
+
+  const dynamicTickInterval = Math.max(1, Math.ceil(dynamicMax / 5));
+
+  const selectedMonthData = graphData.find((g) => g.month === selectedMonth);
   const activeRows = (selectedMonthData?.activeProject ?? []).map((p) => ({
     projectName: p.name,
     startDate: formatDate(p.startDate),
     endDate: formatDate(p.endDate),
     status: p.status,
   }));
-  const completedRows = (selectedMonthData?.completedProjects ?? []).map((p) => ({
-    projectName: p.projectName,
-    startDate: formatDate(p.startDate),
-    endDate: formatDate(p.endDate),
-    status: "COMPLETED",
-  }));
+  const completedRows = (selectedMonthData?.completedProjects ?? []).map(
+    (p) => ({
+      projectName: p.projectName,
+      startDate: formatDate(p.startDate),
+      endDate: formatDate(p.endDate),
+      status: "COMPLETED",
+    }),
+  );
   const tableRows = [...activeRows, ...completedRows];
 
   const chartOptions: Highcharts.Options = {
@@ -172,15 +172,15 @@ function Dashboard() {
       height: 350,
       spacing: [10, 10, 10, 10],
     },
- 
+
     title: {
       text: "",
     },
- 
+
     credits: {
       enabled: false,
     },
- 
+
     xAxis: {
       categories: graphData.map((item) => item.month),
       lineColor: "#E5E7EB",
@@ -193,7 +193,7 @@ function Dashboard() {
         },
       },
     },
- 
+
     yAxis: {
       min: 0,
       max: dynamicMax,
@@ -210,14 +210,14 @@ function Dashboard() {
         },
       },
     },
- 
+
     tooltip: {
       shared: true,
       borderRadius: 10,
       backgroundColor: "#FFFFFF",
       borderColor: "#E5E7EB",
     },
- 
+
     legend: {
       align: "center",
       verticalAlign: "bottom",
@@ -227,8 +227,8 @@ function Dashboard() {
         fontFamily: "Poppins",
       },
     },
- 
-   plotOptions: {
+
+    plotOptions: {
       areaspline: {
         fillOpacity: 0.15,
         lineWidth: 3,
@@ -269,15 +269,14 @@ function Dashboard() {
       },
     ],
   };
- 
+
   return (
     <div className="p-4 sm:p-6">
- 
       {/* Welcome Section */}
       <h2 className="text-lg sm:text-xl font-semibold text-[#00076F] font-[Poppins]">
         Dashboard
       </h2>
- 
+
       {/* KPI Section */}
       <div className="mt-3 grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 md:grid-cols-2 xl:grid-cols-3">
         {stats.map((stat) => (
@@ -312,9 +311,9 @@ function Dashboard() {
           </div>
         ))}
       </div>
- 
+
       {/* GRAPH SECTION */}
-       {/* <div className="mt-5 rounded-xl border border-[#ECECEC] bg-white p-5 shadow-sm" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {/* <div className="mt-5 rounded-xl border border-[#ECECEC] bg-white p-5 shadow-sm" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-[#111827]">Monthly Project Trend</h3>
@@ -387,13 +386,28 @@ function Dashboard() {
       <div className="mt-5 rounded-xl border border-[#ECECEC] bg-white p-5 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-[#111827]">Monthly Project Trend</h3>
-            <p className="text-sm text-[#6B7280]">Active vs Completed projects month wise</p>
+            <h3 className="text-lg font-semibold text-[#111827]">
+              Monthly Project Trend
+            </h3>
+            <p className="text-sm text-[#6B7280]">
+              Active vs Completed projects month wise
+            </p>
           </div>
           {panelOpen && (
             <button
-              onClick={() => { setPanelOpen(false); setSelectedMonth(null); }}
-              style={{ fontSize: '12px', color: '#6B7280', background: '#F3F4F6', border: 'none', borderRadius: '999px', padding: '4px 12px', cursor: 'pointer' }}
+              onClick={() => {
+                setPanelOpen(false);
+                setSelectedMonth(null);
+              }}
+              style={{
+                fontSize: "12px",
+                color: "#6B7280",
+                background: "#F3F4F6",
+                border: "none",
+                borderRadius: "999px",
+                padding: "4px 12px",
+                cursor: "pointer",
+              }}
             >
               ✕ Close
             </button>
@@ -401,103 +415,187 @@ function Dashboard() {
         </div>
 
         {/* Graph + Side Panel */}
-        <div style={{ display: 'flex', gap: '16px', transition: 'all 0.35s ease' }}>
-
+        <div
+          style={{ display: "flex", gap: "16px", transition: "all 0.35s ease" }}
+        >
           {/* Chart — shrinks when panel open */}
           {/* <div style={{ flex: panelOpen ? 1.5 : 1, transition: 'flex 0.35s ease', minWidth: 0 }}> */}
           {/* <div style={{ flex: 1, minWidth: 0 }}>
             <HighchartsReact highcharts={Highcharts} options={chartOptions} immutable={true}/>
           </div> */}
-          <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
-            <HighchartsReact highcharts={Highcharts} options={chartOptions} immutable={true} />
+          <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
+            <HighchartsReact
+              highcharts={Highcharts}
+              options={chartOptions}
+              immutable={true}
+            />
           </div>
 
           {/* Side Panel */}
-          <div style={{
-            width: panelOpen ? '280px' : '0px',
-            overflow: 'hidden',
-            // transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-            transition: 'width 0.3s ease',
-            flexShrink: 0,
-          }}>
-            <div style={{
-              width: '280px',
-              height: '350px',
-              borderRadius: '12px',
-              border: '1px solid #E5E7EB',
-              background: '#fff',
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
-            }}>
-
+          <div
+            style={{
+              width: panelOpen ? "280px" : "0px",
+              overflow: "hidden",
+              // transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              transition: "width 0.3s ease",
+              flexShrink: 0,
+            }}
+          >
+            <div
+              style={{
+                width: "280px",
+                height: "350px",
+                borderRadius: "12px",
+                border: "1px solid #E5E7EB",
+                background: "#fff",
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+              }}
+            >
               {/* Panel Header */}
-              <div style={{ padding: '12px 16px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-                <h2 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#111827' }}>
+              <div
+                style={{
+                  padding: "12px 16px",
+                  borderBottom: "1px solid #E5E7EB",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexShrink: 0,
+                }}
+              >
+                <h2
+                  style={{
+                    margin: 0,
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    color: "#111827",
+                  }}
+                >
                   {selectedMonth} — Projects
                 </h2>
-                <span style={{ fontSize: '11px', background: '#EFF6FF', color: '#2563EB', borderRadius: '999px', padding: '2px 8px', fontWeight: 500 }}>
+                <span
+                  style={{
+                    fontSize: "11px",
+                    background: "#EFF6FF",
+                    color: "#2563EB",
+                    borderRadius: "999px",
+                    padding: "2px 8px",
+                    fontWeight: 500,
+                  }}
+                >
                   {tableRows.length} total
                 </span>
               </div>
 
               {/* Scrollable list */}
-              <div style={{ overflowY: 'auto', flex: 1, padding: '8px 0' }}>
+              <div style={{ overflowY: "auto", flex: 1, padding: "8px 0" }}>
                 {tableRows.length > 0 ? (
                   tableRows.map((project, index) => (
-                    <div key={index} style={{
-                      padding: '10px 16px',
-                      borderBottom: '1px solid #F3F4F6',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '4px',
-                    }}
-                      onMouseEnter={e => (e.currentTarget.style.background = '#F9FAFB')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    <div
+                      key={index}
+                      style={{
+                        padding: "10px 16px",
+                        borderBottom: "1px solid #F3F4F6",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "4px",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = "#F9FAFB")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.background = "transparent")
+                      }
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontSize: '13px', fontWeight: 500, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          gap: "8px",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: "13px",
+                            fontWeight: 500,
+                            color: "#111827",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
                           {project.projectName}
                         </span>
-                        <span style={{
-                          fontSize: '11px',
-                          fontWeight: 500,
-                          borderRadius: '999px',
-                          padding: '2px 8px',
-                          flexShrink: 0,
-                          background: project.status === 'COMPLETED' ? '#DBEAFE' : '#DCFCE7',
-                          color: project.status === 'COMPLETED' ? '#1D4ED8' : '#15803D',
-                        }}>
+                        <span
+                          style={{
+                            fontSize: "11px",
+                            fontWeight: 500,
+                            borderRadius: "999px",
+                            padding: "2px 8px",
+                            flexShrink: 0,
+                            background:
+                              project.status === "COMPLETED"
+                                ? "#DBEAFE"
+                                : "#DCFCE7",
+                            color:
+                              project.status === "COMPLETED"
+                                ? "#1D4ED8"
+                                : "#15803D",
+                          }}
+                        >
                           {project.status}
                         </span>
                       </div>
-                      <span style={{ fontSize: '11px', color: '#9CA3AF' }}>
+                      <span style={{ fontSize: "11px", color: "#9CA3AF" }}>
                         {project.startDate} → {project.endDate}
                       </span>
                     </div>
                   ))
                 ) : (
-                  <div style={{ height: '350px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '32px 16px' }}>
-                    <span style={{ fontSize: '28px' }}>📭</span>
-                    <p style={{ margin: 0, fontSize: '13px', fontWeight: 500, color: '#6B7280', textAlign: 'center' }}>No projects found</p>
-                    <p style={{ margin: 0, fontSize: '11px', color: '#9CA3AF', textAlign: 'center' }}>No records for {selectedMonth}</p>
+                  <div
+                    style={{
+                      height: "350px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "8px",
+                      padding: "32px 16px",
+                    }}
+                  >
+                    <span style={{ fontSize: "28px" }}>📭</span>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        color: "#6B7280",
+                        textAlign: "center",
+                      }}
+                    >
+                      No projects found
+                    </p>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: "11px",
+                        color: "#9CA3AF",
+                        textAlign: "center",
+                      }}
+                    >
+                      No records for {selectedMonth}
+                    </p>
                   </div>
                 )}
               </div>
-
             </div>
           </div>
-
         </div>
       </div>
- 
     </div>
- 
- 
- 
- 
- 
   );
 }
- 
+
 export default Dashboard;
