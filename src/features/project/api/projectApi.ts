@@ -228,6 +228,7 @@ export const updateProject = async (
   payload: Partial<CreateProjectPayload>,
   files: File[],
   assignedUsers?: string[],
+  existingDocumentIds?: string[],
 ): Promise<Project> => {
   const formData = new FormData();
   formData.append("project", JSON.stringify(payload));
@@ -238,6 +239,12 @@ export const updateProject = async (
 
   if (assignedUsers && Array.isArray(assignedUsers)) {
     formData.append("assignedUsers", JSON.stringify(assignedUsers));
+  }
+
+  // jo existing documents UI me bache hain unke IDs (keep-list).
+  // backend isme jo nahi unhe soft-delete kar dega.
+  if (existingDocumentIds && Array.isArray(existingDocumentIds)) {
+    formData.append("existingDocuments", JSON.stringify(existingDocumentIds));
   }
 
   const res = await api.patch(`/project/update-project/${id}`, formData);

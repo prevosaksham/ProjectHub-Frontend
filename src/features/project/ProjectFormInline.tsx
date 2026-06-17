@@ -489,11 +489,19 @@ export default function ProjectFormInline({
         );
         showSuccessToast("Project created successfully.");
       } else if (project) {
+        // existing documents jo UI me abhi bache hain (jinme nayi file nahi hai)
+        // inke IDs keep-list ke roop me bhejo; jo user ne delete kiye wo isme nahi
+        // aayenge, isliye backend unhe soft-delete kar dega.
+        const existingDocumentIds = documents
+          .filter((doc) => !doc.file)
+          .map((doc) => doc.id);
+
         await updateProject(
           project.id,
           payload,
           documents.map((doc) => doc.file).filter((f): f is File => !!f),
           assignedTo.length ? assignedTo : undefined,
+          existingDocumentIds,
         );
         showSuccessToast("Project updated successfully.");
         window.dispatchEvent(new Event("projectUpdated"));
