@@ -60,6 +60,12 @@ function Dashboard() {
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
 
+  const [yearOpen, setYearOpen] = useState(false);
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+
+  const years = Array.from({ length: 15 }, (_, index) => currentYear - index);
+
   const stats: KpiTile[] = [
     {
       label: "Total Projects",
@@ -85,10 +91,16 @@ function Dashboard() {
   ];
 
   useEffect(() => {
+    setSelectedMonth(null);
+    setPanelOpen(false);
+  }, [selectedYear]);
+
+  useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const data = await getDashboardApi();
-        setDashboard(data);
+        setLoading(true);
+        const response = await getDashboardApi(selectedYear);
+        setDashboard(response);
       } catch (error) {
         console.error("Dashboard API Error", error);
       } finally {
@@ -96,7 +108,7 @@ function Dashboard() {
       }
     };
     fetchDashboard();
-  }, []);
+  }, [selectedYear]);
 
   if (loading) {
     return (
@@ -398,25 +410,97 @@ function Dashboard() {
               Active vs Completed projects month wise
             </p>
           </div>
-          {panelOpen && (
-            <button
-              onClick={() => {
-                setPanelOpen(false);
-                setSelectedMonth(null);
-              }}
-              style={{
-                fontSize: "12px",
-                color: "#6B7280",
-                background: "#F3F4F6",
-                border: "none",
-                borderRadius: "999px",
-                padding: "4px 12px",
-                cursor: "pointer",
-              }}
-            >
-              ✕ Close
-            </button>
-          )}
+
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-600">Year</label>
+
+              <div className="relative">
+                <button
+                  onClick={() => setYearOpen(!yearOpen)}
+                  className="
+    flex items-center justify-between
+    min-w-27.5
+    rounded-lg
+    border border-[#D9E2FF]
+    bg-white
+    px-4 py-2
+    text-sm font-semibold
+    text-[#00076F]
+    shadow-sm
+  "
+                >
+                  {selectedYear}
+
+                  <span
+                    className={`text-xs transition-transform ${
+                      yearOpen ? "rotate-180" : ""
+                    }`}
+                  >
+                    ▼
+                  </span>
+                </button>
+
+                {yearOpen && (
+                  <div
+                    className="
+          absolute right-0 top-full z-50 mt-2
+          w-full
+          rounded-lg
+          border border-gray-200
+          bg-white
+          shadow-lg
+          max-h-48
+          overflow-y-auto
+        "
+                  >
+                    {years.map((year) => (
+                      <button
+                        key={year}
+                        onClick={() => {
+                          setSelectedYear(year);
+                          setYearOpen(false);
+                        }}
+                        className={`
+              w-full px-4 py-2 text-left text-sm
+              hover:bg-blue-50
+              ${
+                selectedYear === year
+                  ? "bg-blue-50 text-[#00076F] font-semibold"
+                  : ""
+              }
+            `}
+                      >
+                        {year}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {panelOpen && (
+              <button
+                onClick={() => {
+                  setPanelOpen(false);
+                  setSelectedMonth(null);
+                }}
+                className="
+        rounded-full
+        bg-gray-100
+        px-3
+        py-1.5
+        text-xs
+        font-medium
+        text-gray-600
+        hover:bg-gray-200
+        transition
+      "
+              >
+                ✕ Close
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Graph + Side Panel */}
