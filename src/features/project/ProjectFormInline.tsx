@@ -59,6 +59,23 @@ const generateId = () => {
   return `doc-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 };
 
+const getApiErrorMessage = (error: any) => {
+  const responseData = error?.response?.data;
+  const fieldErrors = Array.isArray(responseData?.errors)
+    ? responseData.errors
+    : Array.isArray(responseData?.data?.errors)
+      ? responseData.data.errors
+      : [];
+
+  return (
+    fieldErrors?.[0]?.message ||
+    responseData?.message ||
+    responseData?.data?.message ||
+    error?.message ||
+    "Unable to save project. Please try again."
+  );
+};
+
 export default function ProjectFormInline({
   project,
   isEditMode,
@@ -253,7 +270,8 @@ export default function ProjectFormInline({
   const getInputClassName = (hasError?: boolean) =>
     `w-full rounded-xl border px-4 py-3 outline-none ${hasError ? "border-red-500 focus:border-red-500" : "border-slate-300 focus:border-blue-500"}`;
 
-  const [dateValidationErrorShown, setDateValidationErrorShown] = useState(false);
+  const [dateValidationErrorShown, setDateValidationErrorShown] =
+    useState(false);
   const watchStartDate = watch("startDate");
   const watchEndDate = watch("endDate");
 
@@ -274,7 +292,6 @@ export default function ProjectFormInline({
     } else {
       setDateValidationErrorShown(false);
     }
-
   }, [watchStartDate, watchEndDate, dateValidationErrorShown]);
 
   useEffect(() => {
@@ -509,10 +526,32 @@ export default function ProjectFormInline({
 
       onSaved?.();
     } catch (error: any) {
+      const message = getApiErrorMessage(error);
+      const responseData = error?.response?.data;
+      const fieldErrors = Array.isArray(responseData?.errors)
+        ? responseData.errors
+        : Array.isArray(responseData?.data?.errors)
+          ? responseData.data.errors
+          : [];
+
+      fieldErrors.forEach((item: { field?: string; message?: string }) => {
+        if (item?.field === "project.description") {
+          setError("description" as any, {
+            type: "server",
+            message: item?.message || message,
+          });
+        }
+
+        if (item?.field === "project.name") {
+          setError("name" as any, {
+            type: "server",
+            message: item?.message || message,
+          });
+        }
+      });
+
+      showErrorToast(message);
       console.error(error);
-      showErrorToast(
-        error?.message || "Unable to save project. Please try again.",
-      );
     } finally {
       setSaving(false);
     }
@@ -599,7 +638,9 @@ export default function ProjectFormInline({
                     {errors.description.message}
                   </p>
                 )}
-                {(userRole == "SUPER_ADMIN" || userRole == "ADMIN" || userRole == "LEADERSHIP") && (
+                {(userRole == "SUPER_ADMIN" ||
+                  userRole == "ADMIN" ||
+                  userRole == "LEADERSHIP") && (
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       Assigned To&nbsp;
@@ -613,7 +654,8 @@ export default function ProjectFormInline({
                       control={control}
                       rules={{
                         validate: (value) =>
-                          !canManageMembers || (Array.isArray(value) && value.length > 0)
+                          !canManageMembers ||
+                          (Array.isArray(value) && value.length > 0)
                             ? true
                             : "Assigned To is required",
                       }}
@@ -943,7 +985,11 @@ export default function ProjectFormInline({
                       required: "Start date is required",
                       validate: (value) => {
                         const endDate = getValues("endDate");
-                        if (value && endDate && new Date(value) > new Date(endDate)) {
+                        if (
+                          value &&
+                          endDate &&
+                          new Date(value) > new Date(endDate)
+                        ) {
                           return "Start date must be before the end date";
                         }
                         return true;
@@ -975,7 +1021,11 @@ export default function ProjectFormInline({
                         ? {
                             validate: (value) => {
                               const startDate = getValues("startDate");
-                              if (value && startDate && new Date(value) < new Date(startDate)) {
+                              if (
+                                value &&
+                                startDate &&
+                                new Date(value) < new Date(startDate)
+                              ) {
                                 return "End date must be after the start date";
                               }
                               return true;
@@ -985,7 +1035,11 @@ export default function ProjectFormInline({
                             required: "End date is required",
                             validate: (value) => {
                               const startDate = getValues("startDate");
-                              if (value && startDate && new Date(value) < new Date(startDate)) {
+                              if (
+                                value &&
+                                startDate &&
+                                new Date(value) < new Date(startDate)
+                              ) {
                                 return "End date must be after the start date";
                               }
                               return true;
@@ -1046,18 +1100,20 @@ export default function ProjectFormInline({
                             env.name as keyof CreateProjectPayload,
                             isSUPER_ADMIN
                               ? {
-                                validate: (value) =>
-                                  !value || validateUrl(value) || "Invalid URL",
-                              }
+                                  validate: (value) =>
+                                    !value ||
+                                    validateUrl(value) ||
+                                    "Invalid URL",
+                                }
                               : {
-                                required: `${env.label} URL is required`,
-                                validate: (value) =>
-                                  validateUrl(value) || "Invalid URL",
-                              }
+                                  required: `${env.label} URL is required`,
+                                  validate: (value) =>
+                                    validateUrl(value) || "Invalid URL",
+                                },
                           )}
                           disabled={isViewOnly}
                           className={`${getInputClassName(
-                            !!errors[env.name as keyof CreateProjectPayload]
+                            !!errors[env.name as keyof CreateProjectPayload],
                           )} w-full border-none focus:outline-none focus:ring-0 font-[Poppins] placeholder:text-[#7A7A7A] placeholder:font-medium placeholder:text-[14px]`}
                           placeholder={`Enter ${env.label} URL`}
                         />
@@ -1066,7 +1122,10 @@ export default function ProjectFormInline({
 
                     {errors[env.name as keyof CreateProjectPayload] && (
                       <p className="mt-1 text-xs text-red-500 wrap-break-word">
-                        {errors[env.name as keyof CreateProjectPayload]?.message}
+                        {
+                          errors[env.name as keyof CreateProjectPayload]
+                            ?.message
+                        }
                       </p>
                     )}
                   </div>
